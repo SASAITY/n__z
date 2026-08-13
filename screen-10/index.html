@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>G8 ОБЪЕКТ - QR</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@100;300;400;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --frame-width: 430px;
+        --frame-height: 932px;
+        --font-family: "IBM Plex Mono", monospace;
+        --ink: #272727;
+        --muted: #999999;
+        --paper: #ffffff;
+        --app-scale: 1;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+        background: #111111;
+        color: var(--ink);
+        font-family: var(--font-family);
+      }
+
+      body {
+        display: flex;
+        align-items: flex-start;
+        justify-content: flex-start;
+      }
+
+      .phone {
+        position: relative;
+        width: var(--frame-width);
+        height: var(--frame-height);
+        overflow: hidden;
+        background: var(--paper);
+        transform: scale(var(--app-scale));
+        transform-origin: top center;
+      }
+
+      .phone::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 121px;
+        z-index: 12;
+        width: 188px;
+        height: 106px;
+        border-radius: 0 0 24px 24px;
+        background: #111111;
+      }
+
+      .screen {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        background:
+          repeating-linear-gradient(
+            90deg,
+            rgba(39, 39, 39, 0.025) 0,
+            rgba(39, 39, 39, 0.025) 58px,
+            transparent 58px,
+            transparent 69px
+          ),
+          var(--paper);
+      }
+
+      .island-title {
+        position: absolute;
+        top: 57px;
+        left: 121px;
+        z-index: 13;
+        display: grid;
+        place-items: center;
+        width: 188px;
+        height: 36px;
+        color: #ffffff;
+        font-size: 24px;
+        font-weight: 600;
+        line-height: 1;
+        text-decoration: none;
+        text-transform: uppercase;
+      }
+
+      .back {
+        position: absolute;
+        left: 25px;
+        top: 134px;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 300;
+        line-height: 1;
+        text-decoration: none;
+        text-transform: uppercase;
+      }
+
+      .help-link {
+        position: absolute;
+        right: 25px;
+        top: 128px;
+        z-index: 2;
+        display: grid;
+        place-items: center;
+        width: 24px;
+        height: 24px;
+        border: 0.5px solid rgba(39, 39, 39, 0.55);
+        border-radius: 50%;
+        color: var(--ink);
+        font-size: 14px;
+        font-weight: 300;
+        line-height: 1;
+        text-decoration: none;
+      }
+
+      .title {
+        position: absolute;
+        left: 25px;
+        top: 184px;
+        margin: 0;
+        font-size: 42px;
+        font-weight: 600;
+        line-height: 0.95;
+        text-transform: uppercase;
+      }
+
+      .hint {
+        position: absolute;
+        left: 25px;
+        top: 280px;
+        width: 300px;
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 300;
+        line-height: 1.15;
+      }
+
+      .scanner {
+        position: absolute;
+        left: 55px;
+        top: 374px;
+        width: 320px;
+        height: 320px;
+      }
+
+      .scanner::before,
+      .scanner::after {
+        content: "";
+        position: absolute;
+        inset: 35px;
+        border: 0.5px solid rgba(39, 39, 39, 0.2);
+        border-radius: 50%;
+      }
+
+      .scanner::after {
+        inset: 72px;
+      }
+
+      .corner {
+        position: absolute;
+        width: 54px;
+        height: 54px;
+      }
+
+      .corner::before,
+      .corner::after {
+        content: "";
+        position: absolute;
+        background: var(--ink);
+      }
+
+      .corner::before {
+        width: 54px;
+        height: 1px;
+      }
+
+      .corner::after {
+        width: 1px;
+        height: 54px;
+      }
+
+      .corner.tl {
+        left: 0;
+        top: 0;
+      }
+
+      .corner.tr {
+        right: 0;
+        top: 0;
+        transform: rotate(90deg);
+      }
+
+      .corner.br {
+        right: 0;
+        bottom: 0;
+        transform: rotate(180deg);
+      }
+
+      .corner.bl {
+        left: 0;
+        bottom: 0;
+        transform: rotate(270deg);
+      }
+
+      .scan-line {
+        position: absolute;
+        left: 28px;
+        top: 50%;
+        width: 264px;
+        height: 1px;
+        background: var(--ink);
+        opacity: 0.55;
+        animation: scan 2.8s ease-in-out infinite;
+      }
+
+      @keyframes scan {
+        0%,
+        100% {
+          transform: translateY(-92px);
+        }
+
+        50% {
+          transform: translateY(92px);
+        }
+      }
+
+      .qr-mark {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        display: grid;
+        grid-template-columns: repeat(3, 18px);
+        grid-template-rows: repeat(3, 18px);
+        gap: 8px;
+        transform: translate(-50%, -50%);
+      }
+
+      .qr-mark span {
+        border: 0.5px solid var(--ink);
+      }
+
+      .qr-mark span:nth-child(1),
+      .qr-mark span:nth-child(5),
+      .qr-mark span:nth-child(9) {
+        background: var(--ink);
+      }
+
+      .status {
+        position: absolute;
+        left: 25px;
+        right: 25px;
+        top: 746px;
+        margin: 0;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 300;
+        line-height: 1.25;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="phone" aria-label="QR сканер">
+      <div class="screen">
+        <a class="island-title" href="../screen-6/index.html" aria-label="Открыть главный экран">G8 ОБЪЕКТ</a>
+        <a class="back" href="../screen-6/index.html">← назад</a>
+        <a class="help-link" href="../screen-11/index.html" aria-label="Открыть справку">?</a>
+
+        <h1 class="title">QR<br />СКАНЕР</h1>
+        <p class="hint">наведите область на qr-код объекта или участника</p>
+
+        <div class="scanner" aria-label="Область наведения на QR">
+          <span class="corner tl"></span>
+          <span class="corner tr"></span>
+          <span class="corner br"></span>
+          <span class="corner bl"></span>
+          <span class="scan-line"></span>
+          <div class="qr-mark" aria-hidden="true">
+            <span></span><span></span><span></span>
+            <span></span><span></span><span></span>
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+
+        <p class="status">камера пока не активна<br />это дизайн-заглушка наведения</p>
+      </div>
+    </main>
+
+    <script>
+      function setAppScale() {
+        const viewport = window.visualViewport || window;
+        const scale = Math.min(1, viewport.width / 430, viewport.height / 932);
+        document.documentElement.style.setProperty("--app-scale", scale.toString());
+      }
+
+      setAppScale();
+      window.addEventListener("resize", setAppScale);
+      window.visualViewport?.addEventListener("resize", setAppScale);
+    </script>
+  </body>
+</html>

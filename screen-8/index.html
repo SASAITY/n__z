@@ -1,0 +1,1104 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>G8 ОБЪЕКТ - секции</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --frame-width: 430px;
+        --frame-height: 932px;
+        --font-family: "IBM Plex Mono", monospace;
+        --ink: #272727;
+        --paper: #ffffff;
+        --app-scale: 1;
+        --map-line-height: 160px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+        background: #111111;
+        color: var(--ink);
+        font-family: var(--font-family);
+        letter-spacing: 0;
+      }
+
+      body {
+        display: flex;
+        align-items: flex-start;
+        justify-content: flex-start;
+      }
+
+      .phone {
+        position: relative;
+        width: var(--frame-width);
+        height: var(--frame-height);
+        overflow: hidden;
+        background: var(--paper);
+        transform: scale(var(--app-scale));
+        transform-origin: top center;
+      }
+
+      .phone::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 121px;
+        z-index: 12;
+        width: 188px;
+        height: 106px;
+        border-radius: 0 0 24px 24px;
+        background: #111111;
+      }
+
+      .screen {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        background: var(--paper);
+      }
+
+      .island-title {
+        position: absolute;
+        top: 57px;
+        left: 121px;
+        z-index: 13;
+        display: grid;
+        place-items: center;
+        width: 188px;
+        height: 36px;
+        color: #ffffff;
+        font-size: 24px;
+        font-weight: 600;
+        line-height: 1;
+        text-decoration: none;
+        text-transform: uppercase;
+      }
+
+      .sections-wrap {
+        position: absolute;
+        top: 143px;
+        left: 0;
+        right: 0;
+        z-index: 2;
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding: 0 0 10px 15px;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .sections-wrap::-webkit-scrollbar {
+        display: none;
+      }
+
+      .section-strip {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        width: max-content;
+        min-width: 100%;
+        padding-right: 60px;
+      }
+
+      .section-button {
+        min-width: 86px;
+        height: 28px;
+        border: 0.5px solid var(--ink);
+        border-radius: 4px;
+        padding: 0 18px;
+        background: #ffffff;
+        color: var(--ink);
+        font-family: var(--font-family);
+        font-size: 13px;
+        font-weight: 400;
+        line-height: 1;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+
+      .section-button.is-active {
+        background: var(--ink);
+        color: #ffffff;
+      }
+
+      .map-scroll {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 198px;
+        bottom: 134px;
+        z-index: 1;
+        overflow-y: auto;
+        overflow-x: hidden;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .map-scroll::-webkit-scrollbar {
+        display: none;
+      }
+
+      .roadmap {
+        position: relative;
+        min-height: 1720px;
+        padding: 0 0 180px;
+      }
+
+      .map-ellipse {
+        position: absolute;
+        top: 0;
+        left: 31px;
+        z-index: 2;
+        width: 56px;
+        height: 56px;
+      }
+
+      .map-title {
+        position: absolute;
+        top: 8px;
+        left: 104px;
+        z-index: 2;
+        max-width: 290px;
+        color: var(--ink);
+        font-size: 38px;
+        font-weight: 600;
+        line-height: 0.92;
+        text-transform: uppercase;
+      }
+
+      .map-line {
+        position: absolute;
+        top: 56px;
+        left: 57.5px;
+        z-index: 1;
+        width: 1px;
+        height: var(--map-line-height);
+        background: #999999;
+        transform-origin: top center;
+        transition: height 120ms linear;
+      }
+
+      .map-intro {
+        position: absolute;
+        top: 64px;
+        left: 104px;
+        width: 300px;
+        color: var(--ink);
+      }
+
+      .map-kicker {
+        margin: 0 0 8px;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 1;
+        text-transform: uppercase;
+      }
+
+      .map-copy {
+        margin: 0;
+        max-width: 260px;
+        color: #5f5f5f;
+        font-size: 10px;
+        font-weight: 300;
+        line-height: 1.1;
+      }
+
+      .road-event {
+        position: relative;
+        left: 0;
+        width: 316px;
+        margin-bottom: 34px;
+        color: var(--ink);
+        cursor: pointer;
+      }
+
+      .events-list {
+        position: absolute;
+        top: 156px;
+        left: 94px;
+        width: 316px;
+      }
+
+      .road-event::before {
+        content: "";
+        position: absolute;
+        left: -51px;
+        top: 11px;
+        z-index: 3;
+        width: 30px;
+        height: 30px;
+        border: 0.5px solid var(--ink);
+        border-radius: 50%;
+        background: #ffffff;
+      }
+
+      .road-event.is-active::before,
+      .road-event.is-reached::before {
+        width: 29px;
+        height: 29px;
+        border: 0;
+        background: radial-gradient(circle at center, #ffffff 0 4px, var(--ink) 5px 14px, transparent 15px);
+      }
+
+      .event-card {
+        position: relative;
+        min-height: 0;
+        padding: 0 42px 22px 13px;
+        border: 0;
+        border-bottom: 0.5px solid rgba(39, 39, 39, 0.55);
+        border-radius: 0;
+        background: transparent;
+      }
+
+      .road-event.is-active .event-card {
+        min-height: 0;
+        padding: 14px 42px 21px 13px;
+        border: 0.5px solid rgba(39, 39, 39, 0.55);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.82);
+      }
+
+      .event-time {
+        margin: 0 0 9px;
+        color: #999999;
+        font-size: 13px;
+        font-weight: 300;
+        line-height: 1;
+      }
+
+      .event-title {
+        margin: 0 0 12px;
+        max-width: 245px;
+        font-size: 16px;
+        font-weight: 600;
+        line-height: 1.02;
+        text-transform: uppercase;
+      }
+
+      .event-description {
+        margin: 0 0 20px;
+        max-width: 245px;
+        color: #5f5f5f;
+        font-size: 12px;
+        font-weight: 300;
+        line-height: 1.12;
+      }
+
+      .event-meta {
+        display: flex;
+        gap: 38px;
+        color: #999999;
+        font-size: 12px;
+        font-weight: 300;
+        line-height: 1;
+        text-transform: uppercase;
+      }
+
+      .event-meta strong {
+        color: var(--ink);
+        font-weight: 400;
+      }
+
+      .event-arrow {
+        position: absolute;
+        right: 16px;
+        top: 34px;
+        width: 14px;
+        height: 14px;
+        border-top: 1px solid var(--ink);
+        border-right: 1px solid var(--ink);
+        transform: rotate(45deg);
+      }
+
+      .road-event:not(.is-active) .event-arrow {
+        right: 16px;
+        top: 25px;
+        width: 13px;
+        height: 13px;
+        border-top: 1px solid var(--ink);
+        border-right: 1px solid var(--ink);
+        transform: rotate(135deg);
+      }
+
+      .opinion-add {
+        position: absolute;
+        width: 18px;
+        height: 18px;
+        border: 0;
+        background: transparent;
+        color: var(--ink);
+        font-size: 0;
+      }
+
+      .card-opinion-add {
+        right: 14px;
+        bottom: 14px;
+      }
+
+      .road-event.is-active .card-opinion-add {
+        top: 119px;
+        bottom: auto;
+      }
+
+      .speaker-opinion-add {
+        right: 0;
+        top: 16px;
+      }
+
+      .opinion-add::before,
+      .opinion-add::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 15px;
+        height: 1px;
+        background: var(--ink);
+        transform: translate(-50%, -50%);
+      }
+
+      .opinion-add::after {
+        transform: translate(-50%, -50%) rotate(90deg);
+      }
+
+      .opinion-add.is-open::after {
+        display: none;
+      }
+
+      .opinion-composer {
+        display: none;
+        margin-top: 18px;
+        padding-top: 13px;
+        border-top: 0.5px solid rgba(39, 39, 39, 0.34);
+      }
+
+      .opinion-composer.is-open {
+        display: block;
+      }
+
+      .opinion-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 31px 31px;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .opinion-input {
+        width: 100%;
+        height: 70px;
+        padding: 8px 9px;
+        overflow: hidden;
+        border: 0.5px solid rgba(39, 39, 39, 0.72);
+        border-radius: 0;
+        background: transparent;
+        color: var(--ink);
+        font-family: var(--font-family);
+        font-size: 11px;
+        font-weight: 300;
+        line-height: 1.16;
+        resize: none;
+      }
+
+      .opinion-input:focus {
+        outline: 1px solid var(--ink);
+        outline-offset: 0;
+      }
+
+      .opinion-send,
+      .opinion-mic {
+        position: relative;
+        display: grid;
+        place-items: center;
+        width: 31px;
+        height: 31px;
+        border: 0;
+        background: transparent;
+      }
+
+      .opinion-send::before {
+        content: "";
+        width: 22px;
+        height: 20px;
+        background: url("../assets/arrow.svg") center / contain no-repeat;
+      }
+
+      .opinion-send::after {
+        content: none;
+      }
+
+      .opinion-send.is-sent::before {
+        width: 20px;
+        height: 21px;
+        background-image: url("../assets/check.svg");
+      }
+
+      .opinion-mic img {
+        display: block;
+        width: 31px;
+        height: 31px;
+        object-fit: contain;
+      }
+
+      .speaker-list {
+        display: none;
+        flex-direction: column;
+        gap: 16px;
+        margin-top: 24px;
+      }
+
+      .road-event.is-active .speaker-list {
+        display: flex;
+      }
+
+      .speaker-item {
+        position: relative;
+        display: grid;
+        grid-template-columns: 46px 58px 1fr;
+        align-items: center;
+        column-gap: 10px;
+        padding-right: 26px;
+      }
+
+      .speaker-item .opinion-composer {
+        grid-column: 1 / -1;
+        width: 100%;
+        margin-top: 12px;
+        padding-top: 12px;
+      }
+
+      .speaker-time {
+        color: #999999;
+        font-size: 11px;
+        font-weight: 300;
+        line-height: 1;
+      }
+
+      .speaker-avatar {
+        display: grid;
+        place-items: center;
+        width: 50px;
+        height: 50px;
+        border: 1px solid var(--ink);
+        border-radius: 50%;
+        color: var(--ink);
+        font-size: 18px;
+        font-weight: 300;
+        line-height: 1;
+        text-transform: uppercase;
+      }
+
+      .speaker-name {
+        margin: 0 0 5px;
+        font-size: 15px;
+        font-weight: 600;
+        line-height: 1;
+      }
+
+      .speaker-role {
+        margin: 0;
+        color: #5f5f5f;
+        font-size: 9px;
+        font-weight: 300;
+        line-height: 1.18;
+      }
+
+      .menu-shade {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        z-index: 7;
+        width: 430px;
+        height: auto;
+        pointer-events: none;
+      }
+
+      .nav {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 38px;
+        z-index: 8;
+        height: 72px;
+      }
+
+      .nav-button {
+        position: absolute;
+        display: grid;
+        place-items: center;
+        border: 0;
+        padding: 0;
+        background: transparent;
+      }
+
+      .profile {
+        left: 34px;
+        bottom: 10px;
+        width: 52px;
+        height: 52px;
+        text-decoration: none;
+      }
+
+      .profile img {
+        display: block;
+        width: 52px;
+        height: 52px;
+        object-fit: contain;
+      }
+
+      .eye {
+        right: 27px;
+        top: -94px;
+        width: 52px;
+        height: 52px;
+      }
+
+      .burger {
+        left: 27px;
+        top: -94px;
+        width: 52px;
+        height: 52px;
+      }
+
+      .help-link {
+        position: absolute;
+        left: 41px;
+        top: -132px;
+        display: grid;
+        place-items: center;
+        width: 24px;
+        height: 24px;
+        border: 0.5px solid rgba(39, 39, 39, 0.55);
+        border-radius: 50%;
+        color: var(--ink);
+        font-size: 14px;
+        font-weight: 300;
+        line-height: 1;
+        text-decoration: none;
+      }
+
+      .mic {
+        left: 179px;
+        bottom: 0;
+        width: 72px;
+        height: 72px;
+      }
+
+      .admin-link {
+        position: absolute;
+        left: 179px;
+        top: 84px;
+        width: 72px;
+        color: #999999;
+        font-size: 12px;
+        font-weight: 300;
+        line-height: 1;
+        text-align: center;
+        text-decoration: underline;
+        text-transform: lowercase;
+      }
+
+      .qr {
+        right: 34px;
+        bottom: 14px;
+        width: 44px;
+        height: 44px;
+        opacity: 0.8;
+      }
+
+      .nav-button img {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+
+      .island-title:focus-visible,
+      .nav-button:focus-visible,
+      .section-button:focus-visible {
+        outline: 1px solid var(--ink);
+        outline-offset: 3px;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="phone" aria-label="Секции G8 объект">
+      <div class="screen">
+        <a class="island-title" href="../screen-6/index.html" aria-label="Открыть главный экран">G8 ОБЪЕКТ</a>
+
+        <section class="sections-wrap" aria-label="Разделы">
+          <div class="section-strip">
+            <button class="section-button is-active" type="button">диджитал</button>
+            <button class="section-button" type="button">цифровые продукты</button>
+            <button class="section-button" type="button">кино</button>
+            <button class="section-button" type="button">ивенты</button>
+            <button class="section-button" type="button">брендинг</button>
+            <button class="section-button" type="button">реклама</button>
+            <button class="section-button" type="button">музыка</button>
+            <button class="section-button" type="button">ии</button>
+            <button class="section-button" type="button">анимация</button>
+            <button class="section-button" type="button">архитектура</button>
+          </div>
+        </section>
+
+        <section class="map-scroll" aria-label="Дорожная карта раздела">
+          <div class="roadmap">
+            <img class="map-ellipse" src="../assets/ellipse-map.svg" alt="" aria-hidden="true" />
+            <div class="map-title" id="map-title">диджитал</div>
+            <span class="map-line" aria-hidden="true"></span>
+            <div class="map-intro">
+              <p class="map-kicker">слой x констракт</p>
+              <p class="map-copy">- если вы бьюти, то вы в нужном месте в нужное время</p>
+            </div>
+            <div class="events-list" id="events-list"></div>
+          </div>
+        </section>
+
+        <img class="menu-shade" src="../assets/menu-rectangle-screen-7.svg" alt="" aria-hidden="true" />
+
+        <nav class="nav" aria-label="Основная навигация">
+          <a class="nav-button profile" href="../screen-4/index.html" aria-label="Мое">
+            <img src="../assets/avatar-screen-7.svg" alt="Ваш аватар" />
+          </a>
+          <a class="nav-button eye" href="../screen-6/index.html" aria-label="Вернуться к пузырю">
+            <img src="../assets/eye-ellipse.svg" alt="" />
+          </a>
+          <a class="nav-button burger" href="../screen-8/index.html" aria-label="Открыть секции">
+            <img src="../assets/burger-screen-7.svg" alt="" />
+          </a>
+          <a class="help-link" href="../screen-11/index.html" aria-label="Открыть справку">?</a>
+          <button class="nav-button mic" type="button" aria-label="Создать запись голосом">
+            <img src="../assets/mic.png" alt="" />
+          </button>
+          <a class="admin-link" href="../screen-9/index.html">админ</a>
+          <a class="nav-button qr" href="../screen-10/index.html" aria-label="Открыть QR сканер">
+            <img src="../assets/qr.png" alt="" />
+          </a>
+        </nav>
+      </div>
+    </main>
+
+    <script>
+      function setAppScale() {
+        const viewport = window.visualViewport || window;
+        const scale = Math.min(1, viewport.width / 430, viewport.height / 932);
+        document.documentElement.style.setProperty("--app-scale", scale.toString());
+      }
+
+      let maxMapLineHeight = 160;
+      let activeEventIndex = null;
+      let activeComposerId = null;
+      let currentSection = "диджитал";
+      let voiceTimer = 0;
+      const composerDrafts = {};
+      const sentComposerIds = new Set();
+
+      const speakerNames = [
+        "Макс Иванов",
+        "Анна Мирова",
+        "Саша Лин",
+        "Ира Север",
+        "Мира Волкова",
+        "Лев Орлов",
+        "Юля Сокол",
+        "Ника Рэй",
+        "Оля Ким",
+        "Ева Бор",
+        "Соня Тесла",
+        "Вера Планк",
+        "Майя Кюри",
+        "Рома Фарадей",
+        "Алиса Блок",
+        "Тим Ньютон",
+        "Пётр Кеплер",
+        "Лена Спектр",
+        "Ион Павлов",
+        "Кира Фотон",
+        "Арья Новак",
+        "Тая Орбита",
+        "Глеб Кварк",
+        "Рита Плазма",
+        "Марк Лавуазье",
+        "Дана Кристалл",
+        "Федя Паули",
+        "Инга Ферми",
+        "Вадим Галилей",
+        "Зоя Авогадро",
+        "Нора Альфа",
+        "Паша Сурья",
+        "Лея Мантра",
+        "Ян Реактив",
+        "Мила Резерфорд",
+        "Тома Агни",
+      ];
+
+      const sectionThemes = {
+        диджитал: [
+          ["стрижка - это дизайн, а хороший человек - профессия", "креативное образование и рост в актуальном креативном бьюти"],
+          ["стиль - это не обои мама, хотя и обои тоже", "разносторонний диалог о человеке, его стиле и коммуникации"],
+          ["точка входа в новый цифровой жест", "короткая сессия о том, как интерфейс становится частью личности"],
+          ["соцсеть как сцена для тихого взрыва", "разбор вирусных форматов и честной реакции аудитории"],
+          ["технокреатив без инструкции", "как собрать цифровой опыт из голоса, жеста и паузы"],
+          ["активация, которая разговаривает сама", "практика живого участия в диджитал среде"],
+          ["ии-крафт и человеческая ошибка", "почему несовершенство делает цифровой объект ближе"],
+        ],
+        "цифровые продукты": [
+          ["интерфейс, который не спорит", "как продукт помогает человеку не терять мысль"],
+          ["мобильное приложение как привычка", "сценарии возвращения и мягкого повторного входа"],
+          ["сайт, который держит внимание", "ритм блоков, микротексты и честная навигация"],
+          ["идеальная функция без шума", "разбор точности в маленьких продуктовых решениях"],
+          ["прорывное решение без фейерверка", "как новая механика становится понятной сразу"],
+          ["исполнение, которое не видно", "почему хороший продукт кажется естественным"],
+        ],
+        кино: [
+          ["короткий метр и длинная память", "как дебют оставляет след после финального кадра"],
+          ["герой креативной индустрии", "разговор о биографиях, труде и мифах профессии"],
+          ["фестиваль как монтаж людей", "как события собирают городскую кинематографичность"],
+          ["сцена до первого слова", "разбор паузы, света и ожидания в кадре"],
+          ["документальность без отчёта", "как реальность становится авторским высказыванием"],
+          ["игровой дебют и риск", "почему ошибка иногда сильнее правильной сцены"],
+        ],
+        ивенты: [
+          ["клиентская интеграция без пафоса", "как бренд входит в событие и не ломает атмосферу"],
+          ["застройка как драматургия", "пространство, маршрут и точка удивления"],
+          ["ивент, который помнят телом", "звук, очередь, свет и маленькие действия гостей"],
+          ["событие после события", "что остаётся у человека на следующий день"],
+          ["сцена и социальный жест", "как программа превращается в совместное участие"],
+          ["маршрут вместо расписания", "как вести гостя без лишних объяснений"],
+        ],
+        брендинг: [
+          ["брендинг по правилам и против них", "где система держит форму, а где начинает дышать"],
+          ["упаковка как маленькая архитектура", "материал, шрифт и первое касание"],
+          ["концепция, которую можно носить", "как идея становится узнаваемой в деталях"],
+          ["реформа знака без потери памяти", "как обновить бренд и не стереть его прошлое"],
+          ["территория говорит логотипом", "брендинг места, маршрута и ожидания"],
+          ["юниоры и смелая простота", "первые работы, где уже видно направление"],
+        ],
+        реклама: [
+          ["кампания, которая не кричит", "как интеграция становится частью разговора"],
+          ["ролик как короткая привычка", "ритм, кадр и точка повторного просмотра"],
+          ["социальный проект без морализации", "как говорить о важном и не терять человека"],
+          ["печатная реклама в новом темпе", "бумага, пауза и точность формулировки"],
+          ["нестандарт как способ слушать", "механики, которые открывают новый контакт"],
+          ["крафт, заметный только вблизи", "деталь, монтаж и честная ручная работа"],
+        ],
+        музыка: [
+          ["новый звук в старом помещении", "как пространство меняет восприятие трека"],
+          ["эхо эпох без ностальгии", "разговор о памяти, тембре и современной форме"],
+          ["жанры встречаются на паузе", "как гибрид звучит убедительно, а не случайно"],
+          ["визуальная реализация музыки", "как образ помогает услышать иначе"],
+          ["концептуальная работа без холода", "идея, которая сохраняет эмоциональный риск"],
+          ["звук как цифровой след", "что остаётся после прослушивания"],
+        ],
+        ии: [
+          ["агенты и человеческая просьба", "как формулировка меняет поведение системы"],
+          ["инструменты для креаторов", "где автоматизация помогает, а где мешает руке"],
+          ["ии-опыт без магического дыма", "честный разговор о пользе, сбоях и доверии"],
+          ["звук, видео и машинная интонация", "как отличить эффект от высказывания"],
+          ["юниоры искусственного интеллекта", "первые эксперименты и неожиданные решения"],
+          ["алгоритм как соавтор", "где заканчивается подсказка и начинается позиция"],
+        ],
+        анимация: [
+          ["мастерство в маленьком движении", "как жест делает персонажа живым"],
+          ["сериал и длинная форма", "ритм повторения, узнаваемость и развитие мира"],
+          ["анимация в рекламе", "как движение помогает бренду говорить точнее"],
+          ["ии и анимационный набросок", "почему инструмент не заменяет наблюдение"],
+          ["зарисовка как честный кадр", "быстрая форма, в которой видно мышление"],
+          ["юниоры анимации", "первые миры и смелые ошибки"],
+        ],
+        архитектура: [
+          ["благоустройство как сценарий дня", "как маршрут меняет привычку города"],
+          ["дизайн-проект без лишнего жеста", "материал, свет и спокойная функция"],
+          ["экспозиция как временное здание", "архитектура просмотра и движения"],
+          ["территория и девелоперский проект", "как место получает голос и характер"],
+          ["архитектурный проект в деталях", "масштаб, ритм и человеческая дистанция"],
+          ["юниоры архитектуры", "новые взгляды на городские пустоты"],
+        ],
+      };
+
+      const voiceOpeners = [
+        "я сначала не понял, почему это цепляет, а потом поймал ритм",
+        "для меня здесь главное не форма, а то, как она меняет внимание",
+        "есть ощущение, что работа специально оставляет место зрителю",
+        "это не выглядит как готовый ответ, скорее как приглашение",
+        "я бы отметил очень точный баланс между жестом и тишиной",
+        "в этой истории мне ближе всего человеческая неровность",
+        "кажется, проект работает сильнее, когда перестаешь его объяснять",
+        "здесь интересно то, что смысл собирается не сразу",
+        "я слышу в этом спокойную, но довольно упрямую позицию",
+        "самое ценное здесь — ощущение живого контакта",
+        "работа выглядит простой, но внутри у нее длинное послевкусие",
+        "мне нравится, что здесь нет лишнего давления на зрителя",
+      ];
+
+      const voiceDetails = [
+        "детали не спорят между собой и дают глазу спокойно двигаться дальше",
+        "каждый следующий элемент будто добавляет новый слой восприятия",
+        "в какой-то момент начинаешь замечать не объект, а собственную реакцию",
+        "это похоже на разговор, который продолжается уже после выхода",
+        "внутри есть мягкая точность, без желания все объяснить до конца",
+        "срабатывает не громкий прием, а маленькое смещение привычного взгляда",
+        "ритм кажется почти случайным, но именно поэтому он живой",
+        "тема раскрывается через паузу, дистанцию и очень честный тон",
+        "возникает чувство, что идея продолжает двигаться сама",
+        "это не финальная точка, а скорее начало дальнейшего наблюдения",
+        "здесь хорошо виден человек за решением, а не только конструкция",
+        "работа оставляет пространство для сомнения, и это делает ее сильнее",
+      ];
+
+      const voiceClosers = [
+        "я бы оставил это в финальном отборе",
+        "хочется вернуться и проверить первое впечатление",
+        "это хороший повод для спокойного разговора",
+        "мне кажется, именно так и рождается обратная связь",
+        "в этом есть честная энергия момента",
+        "для меня это один из самых точных эпизодов секции",
+        "такой след не исчезает сразу",
+        "здесь мнение становится частью самой работы",
+        "это звучит неожиданно, но убедительно",
+        "я бы хотел услышать рядом еще несколько голосов",
+        "эта работа держит внимание без лишнего шума",
+        "она не закрывается после первого прочтения",
+      ];
+
+      function voiceSampleFor(id) {
+        const eventIndex = Number(id.split("-")[1]) || 0;
+        const speakerOffset = Number(id.split("-")[2]) || 0;
+        const theme = sectionThemes[currentSection] || sectionThemes.диджитал;
+        const item = theme[eventIndex % theme.length];
+        const sectionHash = [...currentSection].reduce((sum, char) => sum + char.charCodeAt(0), 0);
+        const typeShift = id.startsWith("speaker") ? 9 : 3;
+        const base = sectionHash + eventIndex * 29 + speakerOffset * 17 + typeShift;
+        const opener = voiceOpeners[base % voiceOpeners.length];
+        const detail = voiceDetails[(base + eventIndex + speakerOffset * 3) % voiceDetails.length];
+        const closer = voiceClosers[(base + eventIndex * 2 + speakerOffset * 5) % voiceClosers.length];
+
+        if (id.startsWith("speaker")) {
+          return `${opener}. В пункте «${item[0]}» ${detail}. ${closer}`;
+        }
+
+        return `${opener}. «${item[0]}» ощущается как ${item[1]}. ${detail}. ${closer}`;
+      }
+
+      function draftKey(id) {
+        return `${currentSection}:${id}`;
+      }
+
+      function escapeHtml(value) {
+        return String(value)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      function renderComposer(id) {
+        return `
+          <div class="opinion-composer${activeComposerId === id ? " is-open" : ""}" data-composer-id="${id}">
+            <div class="opinion-row">
+              <textarea class="opinion-input" rows="3" placeholder="введите мнение">${escapeHtml(composerDrafts[draftKey(id)] || "")}</textarea>
+              <button class="opinion-send${sentComposerIds.has(draftKey(id)) ? " is-sent" : ""}" type="button" aria-label="Отправить мнение"></button>
+              <button class="opinion-mic" type="button" aria-label="Записать голосом"><img src="../assets/mic.png" alt="" /></button>
+            </div>
+          </div>
+        `;
+      }
+
+      function buildEvents(section) {
+        const items = sectionThemes[section] || sectionThemes.диджитал;
+        return items.map(([title, description], index) => ({
+          title,
+          description,
+          time: `${1 + Math.floor(index / 3)} / ${13 + index}:00`,
+          status: index === 0 ? "сейчас" : "скоро",
+          place: index % 2 === 0 ? "главная сцена" : "малая сцена",
+          speakers: [0, 1, 2, 3].map((offset) => {
+            const name = speakerNames[(index * 4 + offset) % speakerNames.length];
+            const initials = name
+              .split(" ")
+              .map((part) => part[0])
+              .join("")
+              .toLowerCase();
+            return {
+              name,
+              initials,
+              offset,
+              time: `${13 + index}:${String(offset * 15).padStart(2, "0")}`,
+              role: index % 2 === 0 ? "Арт - директор<br />успешно подстриг более 1м голов" : "Креативный продюсер<br />собрал опыт для живой аудитории",
+            };
+          }),
+        }));
+      }
+
+      function renderEvents(section) {
+        const list = document.querySelector("#events-list");
+        if (!list) return;
+
+        list.innerHTML = buildEvents(section)
+          .map(
+            (event, index) => `
+              <article class="road-event${activeEventIndex === index ? " is-active" : ""}" data-index="${index}">
+                <div class="event-card">
+                  <p class="event-time">${event.time}</p>
+                  <h2 class="event-title">${event.title}</h2>
+                  <p class="event-description">${event.description}</p>
+                  <div class="event-meta"><strong>${event.status}</strong><span>${event.place}</span></div>
+                  <span class="event-arrow" aria-hidden="true"></span>
+                  <button class="opinion-add card-opinion-add${activeComposerId === `card-${index}` ? " is-open" : ""}" type="button" data-composer-id="card-${index}" aria-label="Добавить мнение">+</button>
+                  ${renderComposer(`card-${index}`)}
+                  <div class="speaker-list">
+                    ${event.speakers
+                      .map(
+                        (speaker) => `
+                          <div class="speaker-item">
+                            <span class="speaker-time">${speaker.time}</span><span class="speaker-avatar">${speaker.initials}</span>
+                            <div><p class="speaker-name">${speaker.name}</p><p class="speaker-role">${speaker.role}</p></div>
+                            <button class="opinion-add speaker-opinion-add${activeComposerId === `speaker-${index}-${speaker.offset}` ? " is-open" : ""}" type="button" data-composer-id="speaker-${index}-${speaker.offset}" aria-label="Добавить мнение">+</button>
+                            ${renderComposer(`speaker-${index}-${speaker.offset}`)}
+                          </div>
+                        `,
+                      )
+                      .join("")}
+                  </div>
+                </div>
+              </article>
+            `,
+          )
+          .join("");
+
+        list.querySelectorAll(".road-event").forEach((event) => {
+          event.addEventListener("click", () => {
+            const index = Number(event.dataset.index);
+            activeEventIndex = activeEventIndex === index ? null : index;
+            if (activeEventIndex !== index) activeComposerId = null;
+            renderEvents(currentSection);
+            updateMapLine();
+          });
+        });
+
+        list.querySelectorAll(".opinion-add").forEach((button) => {
+          button.addEventListener("click", (event) => {
+            event.stopPropagation();
+            const card = button.closest(".road-event");
+            const index = Number(card.dataset.index);
+            const id = button.dataset.composerId;
+            activeEventIndex = index;
+            activeComposerId = activeComposerId === id ? null : id;
+            renderEvents(currentSection);
+            updateMapLine();
+            document.querySelector(`.opinion-composer[data-composer-id="${id}"] .opinion-input`)?.focus();
+          });
+        });
+
+        list.querySelectorAll(".opinion-composer").forEach((composer) => {
+          composer.addEventListener("click", (event) => event.stopPropagation());
+        });
+
+        list.querySelectorAll(".opinion-input").forEach((input) => {
+          input.addEventListener("input", () => {
+            const id = input.closest(".opinion-composer").dataset.composerId;
+            const key = draftKey(id);
+            composerDrafts[key] = input.value;
+            sentComposerIds.delete(key);
+            input.closest(".opinion-composer")?.querySelector(".opinion-send")?.classList.remove("is-sent");
+          });
+        });
+
+        list.querySelectorAll(".opinion-mic").forEach((button) => {
+          button.addEventListener("click", (event) => {
+            event.stopPropagation();
+            const id = button.closest(".opinion-composer").dataset.composerId;
+            sentComposerIds.delete(draftKey(id));
+            simulateVoiceInput(id);
+          });
+        });
+
+        list.querySelectorAll(".opinion-send").forEach((button) => {
+          button.addEventListener("click", (event) => {
+            event.stopPropagation();
+            const id = button.closest(".opinion-composer").dataset.composerId;
+            const key = draftKey(id);
+            composerDrafts[key] = "";
+            sentComposerIds.add(key);
+            renderEvents(currentSection);
+            updateMapLine();
+          });
+        });
+      }
+
+      function simulateVoiceInput(id) {
+        const input = document.querySelector(`.opinion-composer[data-composer-id="${id}"] .opinion-input`);
+        if (!input) return;
+
+        const text = voiceSampleFor(id);
+        const key = draftKey(id);
+        let cursor = 0;
+        clearInterval(voiceTimer);
+        input.value = "";
+        composerDrafts[key] = "";
+        sentComposerIds.delete(key);
+        input.focus();
+
+        voiceTimer = window.setInterval(() => {
+          cursor += 1;
+          input.value = text.slice(0, cursor);
+          composerDrafts[key] = input.value;
+          if (cursor >= text.length) {
+            clearInterval(voiceTimer);
+          }
+        }, 34);
+      }
+
+      function updateMapLine() {
+        const scroll = document.querySelector(".map-scroll");
+        if (!scroll) return;
+
+        const maxHeight = 1584;
+        const minHeight = 160;
+        const progress = Math.min(1, scroll.scrollTop / Math.max(1, scroll.scrollHeight - scroll.clientHeight));
+        const height = minHeight + (maxHeight - minHeight) * progress;
+        maxMapLineHeight = Math.max(maxMapLineHeight, height);
+        document.documentElement.style.setProperty("--map-line-height", `${maxMapLineHeight.toFixed(1)}px`);
+
+        document.querySelectorAll(".road-event").forEach((event) => {
+          const markerCenter = event.offsetTop + event.offsetParent.offsetTop + 26;
+          event.classList.toggle("is-reached", maxMapLineHeight >= markerCenter);
+        });
+      }
+
+      document.querySelectorAll(".section-button").forEach((button) => {
+        button.addEventListener("click", () => {
+          document.querySelectorAll(".section-button").forEach((item) => item.classList.remove("is-active"));
+          button.classList.add("is-active");
+          currentSection = button.textContent;
+          activeEventIndex = null;
+          activeComposerId = null;
+          document.querySelector("#map-title").textContent = currentSection;
+          renderEvents(currentSection);
+          updateMapLine();
+        });
+      });
+
+      setAppScale();
+      activeEventIndex = 0;
+      renderEvents(currentSection);
+      updateMapLine();
+      document.querySelector(".map-scroll")?.addEventListener("scroll", updateMapLine, { passive: true });
+      window.addEventListener("resize", setAppScale);
+      window.visualViewport?.addEventListener("resize", setAppScale);
+    </script>
+  </body>
+</html>

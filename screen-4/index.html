@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>НОВАЯ ЗАПИСЬ — экран 4</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@100;300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --frame-width: 430px;
+        --frame-height: 932px;
+        --grid-margin: 25px;
+        --grid-gutter: 10px;
+        --grid-column: 68px;
+        --content-offset: 50px;
+        --font-family: "IBM Plex Mono", monospace;
+        --display-size: 33px;
+        --lead-size: 16px;
+        --body-size: 15px;
+        --body-line-height: 1.08;
+        --ink: #272727;
+        --body-color: #999999;
+        --paper: #ffffff;
+        --content-width: calc(var(--frame-width) - (var(--grid-margin) * 2));
+        --app-scale: 1;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+        background: #111111;
+        color: var(--ink);
+        font-family: var(--font-family);
+        letter-spacing: 0;
+      }
+
+      body {
+        display: flex;
+        align-items: flex-start;
+        justify-content: flex-start;
+      }
+
+      .phone {
+        position: relative;
+        width: var(--frame-width);
+        height: var(--frame-height);
+        margin: 0;
+        overflow: hidden;
+        background: var(--paper);
+        border-radius: 0;
+        transform: scale(var(--app-scale));
+        transform-origin: top center;
+      }
+
+      .phone::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 121px;
+        z-index: 5;
+        width: 188px;
+        height: 35px;
+        border-radius: 0 0 18px 18px;
+        background: #111111;
+      }
+
+      .screen {
+        position: absolute;
+        inset: 0;
+        width: var(--frame-width);
+        height: var(--frame-height);
+        overflow: hidden;
+        background: var(--paper);
+      }
+
+      .brand {
+        position: absolute;
+        top: 53px;
+        left: 50%;
+        width: 178px;
+        height: auto;
+        display: block;
+        transform: translateX(-50%);
+      }
+
+      .status-line {
+        position: absolute;
+        top: 81px;
+        left: 50%;
+        width: 149px;
+        height: 15px;
+        display: block;
+        transform: translateX(-50%);
+      }
+
+      .title {
+        position: absolute;
+        top: 186px;
+        left: var(--grid-margin);
+        width: var(--content-width);
+        margin: 0;
+        color: var(--ink);
+        font-size: var(--display-size);
+        font-weight: 600;
+        line-height: 1.11;
+        text-align: left;
+        text-transform: uppercase;
+      }
+
+      .subtitle {
+        position: absolute;
+        top: 270px;
+        left: var(--grid-margin);
+        width: var(--content-width);
+        margin: 0;
+        color: var(--ink);
+        font-size: var(--lead-size);
+        font-weight: 300;
+        line-height: 0.89;
+        text-align: left;
+      }
+
+      .avatar {
+        position: absolute;
+        top: 318px;
+        left: 105px;
+        width: 220px;
+        height: 244px;
+        display: block;
+      }
+
+      .name-label {
+        position: absolute;
+        top: 592px;
+        left: var(--grid-margin);
+        width: var(--content-width);
+        margin: 0;
+        color: var(--ink);
+        font-size: 12px;
+        font-weight: 300;
+        line-height: 1;
+      }
+
+      .name-input {
+        position: absolute;
+        top: 616px;
+        left: var(--grid-margin);
+        width: var(--content-width);
+        height: 35px;
+        margin: 0;
+        padding: 0 10px;
+        border: 0.5px solid var(--ink);
+        border-radius: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: var(--font-family);
+        font-size: 14px;
+        font-weight: 300;
+        line-height: 35px;
+        outline: none;
+      }
+
+      .name-input:focus {
+        border-color: var(--ink);
+      }
+
+      .role-label {
+        position: absolute;
+        top: 665px;
+        left: var(--grid-margin);
+        width: var(--content-width);
+        margin: 0;
+        color: var(--ink);
+        font-size: 12px;
+        font-weight: 300;
+        line-height: 1;
+      }
+
+      .role-select {
+        position: absolute;
+        top: 689px;
+        left: var(--grid-margin);
+        width: var(--content-width);
+        height: 35px;
+        margin: 0;
+        padding: 0 10px;
+        border: 0.5px solid var(--ink);
+        border-radius: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: var(--font-family);
+        font-size: 14px;
+        font-weight: 300;
+        line-height: 35px;
+        outline: none;
+      }
+
+      .role-select:focus {
+        border-color: var(--ink);
+      }
+
+      .cta {
+        position: absolute;
+        top: 756px;
+        left: var(--grid-margin);
+        width: var(--content-width);
+        height: 48px;
+        display: block;
+        padding: 0;
+        border: 0;
+        border-radius: 2px;
+        background: transparent;
+        cursor: pointer;
+      }
+
+      .cta img {
+        width: var(--content-width);
+        height: 48px;
+        display: block;
+      }
+
+      .back {
+        position: absolute;
+        top: 826px;
+        left: 0;
+        width: var(--frame-width);
+        color: var(--body-color);
+        font-size: 12px;
+        font-weight: 300;
+        line-height: 1;
+        text-align: center;
+        text-decoration: none;
+        text-transform: uppercase;
+      }
+
+      .cta:focus-visible,
+      .back:focus-visible {
+        outline: 1px solid var(--ink);
+        outline-offset: 3px;
+      }
+
+      @media (min-width: 860px) and (min-height: 932px) {
+        .phone {
+          border-radius: 42px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="phone" aria-label="MVP Новая Запись">
+      <div class="screen" aria-label="Четвертый экран">
+        <a href="../screen-6/index.html" aria-label="Открыть главный экран">
+          <img class="brand" src="../assets/g8-title.png" alt="G8 – TO – СЛОЙ" />
+        </a>
+        <img class="status-line" src="../assets/status-line-screen-4.svg" alt="" />
+
+        <h1 class="title">создайте свою персону</h1>
+
+        <p class="subtitle">это займет меньше минуты</p>
+
+        <img class="avatar" src="../assets/avatar.png" alt="ваш аватар" />
+
+        <label class="name-label" for="persona-name">как к вам обращаться?</label>
+        <input class="name-input" id="persona-name" name="persona-name" type="text" autocomplete="name" />
+
+        <label class="role-label" for="persona-role">кто вы</label>
+        <select class="role-select" id="persona-role" name="persona-role">
+          <option>гость</option>
+          <option>артист</option>
+          <option>инвестор</option>
+          <option>руководитель</option>
+          <option>организатор</option>
+        </select>
+
+        <a class="cta" href="../screen-5/index.html" aria-label="Далее">
+          <img src="../assets/button.png" alt="ДАЛЕЕ" />
+        </a>
+
+        <a class="back" href="../screen-3/index.html" aria-label="Назад на третий экран">← НАЗАД</a>
+      </div>
+    </main>
+    <script>
+      function setAppScale() {
+        const viewport = window.visualViewport || window;
+        const scale = Math.min(1, viewport.width / 430, viewport.height / 932);
+        document.documentElement.style.setProperty("--app-scale", scale.toString());
+      }
+
+      setAppScale();
+      window.addEventListener("resize", setAppScale);
+      window.visualViewport?.addEventListener("resize", setAppScale);
+    </script>
+  </body>
+</html>

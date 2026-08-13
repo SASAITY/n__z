@@ -1,0 +1,802 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>НОВАЯ ЗАПИСЬ - админка</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@100;300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --frame-width: 430px;
+        --frame-height: 932px;
+        --font-family: "IBM Plex Mono", monospace;
+        --ink: #272727;
+        --muted: #8f8f8f;
+        --paper: #ffffff;
+        --line: rgba(39, 39, 39, 0.55);
+        --app-scale: 1;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+        background: #111111;
+        color: var(--ink);
+        font-family: var(--font-family);
+        letter-spacing: 0;
+      }
+
+      body {
+        display: flex;
+        align-items: flex-start;
+        justify-content: flex-start;
+      }
+
+      .phone {
+        position: relative;
+        width: var(--frame-width);
+        height: var(--frame-height);
+        overflow: hidden;
+        background: var(--paper);
+        transform: scale(var(--app-scale));
+        transform-origin: top center;
+      }
+
+      .phone::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 121px;
+        z-index: 12;
+        width: 188px;
+        height: 106px;
+        border-radius: 0 0 24px 24px;
+        background: #111111;
+      }
+
+      .island-title {
+        position: absolute;
+        top: 57px;
+        left: 121px;
+        z-index: 13;
+        display: grid;
+        place-items: center;
+        width: 188px;
+        height: 36px;
+        color: #ffffff;
+        font-size: 24px;
+        font-weight: 600;
+        line-height: 1;
+        text-decoration: none;
+        text-transform: uppercase;
+      }
+
+      .help-link {
+        position: absolute;
+        left: 25px;
+        top: 134px;
+        z-index: 13;
+        display: grid;
+        place-items: center;
+        width: 24px;
+        height: 24px;
+        border: 0.5px solid rgba(39, 39, 39, 0.55);
+        border-radius: 50%;
+        color: var(--ink);
+        font-size: 14px;
+        font-weight: 300;
+        line-height: 1;
+        text-decoration: none;
+      }
+
+      .screen {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        background: var(--paper);
+      }
+
+      .admin-scroll {
+        position: absolute;
+        inset: 0;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding: 132px 25px 110px;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .admin-scroll::-webkit-scrollbar {
+        display: none;
+      }
+
+      .page-title {
+        margin: 0;
+        font-size: 32px;
+        font-weight: 600;
+        line-height: 1;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+
+      .page-subtitle {
+        margin: 8px 0 28px;
+        color: var(--ink);
+        font-size: 17px;
+        font-weight: 300;
+        line-height: 1;
+        text-transform: lowercase;
+      }
+
+      .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        margin-bottom: 34px;
+        border: 0.5px solid var(--line);
+      }
+
+      .summary-cell {
+        min-height: 72px;
+        padding: 13px 8px 10px;
+        border-right: 0.5px solid var(--line);
+      }
+
+      .summary-cell:last-child {
+        border-right: 0;
+      }
+
+      .summary-value {
+        margin: 0 0 7px;
+        font-size: 18px;
+        font-weight: 600;
+        line-height: 1;
+      }
+
+      .summary-label {
+        margin: 0;
+        color: var(--muted);
+        font-size: 8px;
+        font-weight: 300;
+        line-height: 1.1;
+      }
+
+      .section-note {
+        margin: 0 0 12px;
+        color: var(--muted);
+        font-size: 10px;
+        font-weight: 300;
+        line-height: 1.2;
+      }
+
+      .admin-card {
+        margin-bottom: 10px;
+        border: 0.5px solid var(--line);
+        background: var(--paper);
+      }
+
+      .admin-toggle {
+        display: grid;
+        grid-template-columns: 34px minmax(0, 1fr) 78px 24px;
+        align-items: center;
+        width: 100%;
+        min-height: 58px;
+        border: 0;
+        border-bottom: 0.5px solid var(--line);
+        padding: 0 14px;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: var(--font-family);
+        text-align: left;
+      }
+
+      .marker {
+        position: relative;
+        width: 22px;
+        height: 22px;
+      }
+
+      .marker::before,
+      .marker::after {
+        content: "";
+        position: absolute;
+        border: 0.5px solid var(--ink);
+      }
+
+      .marker::before {
+        left: 2px;
+        top: 3px;
+        width: 16px;
+        height: 16px;
+      }
+
+      .marker::after {
+        left: 9px;
+        top: 0;
+        width: 11px;
+        height: 11px;
+        background: var(--paper);
+      }
+
+      .toggle-title {
+        font-size: 16px;
+        font-weight: 600;
+        line-height: 1;
+        text-transform: uppercase;
+      }
+
+      .toggle-score {
+        font-size: 16px;
+        font-weight: 500;
+        line-height: 1;
+        text-align: right;
+        padding-right: 14px;
+      }
+
+      .toggle-arrow {
+        width: 12px;
+        height: 12px;
+        border-right: 1px solid var(--ink);
+        border-bottom: 1px solid var(--ink);
+        transform: rotate(45deg);
+        transition: transform 160ms ease;
+      }
+
+      .admin-card.is-open .toggle-arrow {
+        transform: rotate(225deg);
+      }
+
+      .admin-panel {
+        display: none;
+        padding: 22px 14px 26px;
+      }
+
+      .admin-card.is-open .admin-panel {
+        display: block;
+      }
+
+      .signal-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+        margin-bottom: 20px;
+      }
+
+      .signal-value {
+        margin: 0 0 5px;
+        font-size: 18px;
+        font-weight: 600;
+        line-height: 1;
+      }
+
+      .signal-label {
+        margin: 0;
+        color: var(--muted);
+        font-size: 8px;
+        font-weight: 300;
+        line-height: 1.08;
+        text-transform: lowercase;
+      }
+
+      .bar-track {
+        position: relative;
+        height: 8px;
+        margin: 0 0 26px;
+        background: rgba(39, 39, 39, 0.08);
+      }
+
+      .bar-fill {
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 8px;
+        width: 64%;
+        background: var(--ink);
+      }
+
+      .panel-label {
+        margin: 0 0 10px;
+        color: var(--muted);
+        font-size: 10px;
+        font-weight: 300;
+        line-height: 1;
+        text-transform: uppercase;
+      }
+
+      .quote {
+        margin: 0 0 26px;
+        font-size: 13px;
+        font-weight: 400;
+        line-height: 1.18;
+      }
+
+      .mini-chart {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        align-items: end;
+        gap: 9px;
+        height: 124px;
+        margin-bottom: 28px;
+        padding: 15px 0 0;
+        border-top: 0.5px solid rgba(39, 39, 39, 0.28);
+        border-bottom: 0.5px solid rgba(39, 39, 39, 0.28);
+      }
+
+      .chart-bar {
+        position: relative;
+        height: var(--h);
+        background: var(--ink);
+      }
+
+      .chart-bar::before {
+        content: attr(data-value);
+        position: absolute;
+        left: 50%;
+        top: -16px;
+        color: var(--ink);
+        font-size: 9px;
+        font-weight: 500;
+        transform: translateX(-50%);
+      }
+
+      .chart-bar::after {
+        content: attr(data-time);
+        position: absolute;
+        left: 50%;
+        bottom: -18px;
+        color: var(--muted);
+        font-size: 7px;
+        font-weight: 300;
+        transform: translateX(-50%);
+      }
+
+      .rank-list {
+        display: grid;
+        gap: 13px;
+        margin-bottom: 26px;
+      }
+
+      .rank-item {
+        display: grid;
+        grid-template-columns: 112px 1fr 34px;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .rank-name,
+      .rank-value {
+        font-size: 11px;
+        font-weight: 500;
+        line-height: 1;
+        text-transform: uppercase;
+      }
+
+      .rank-line {
+        height: 5px;
+        background: rgba(39, 39, 39, 0.08);
+      }
+
+      .rank-line span {
+        display: block;
+        height: 5px;
+        width: var(--w);
+        background: var(--ink);
+      }
+
+      .problem-list {
+        display: grid;
+        gap: 8px;
+        margin-bottom: 14px;
+      }
+
+      .problem {
+        display: grid;
+        grid-template-columns: 1fr 28px;
+        align-items: center;
+        min-height: 34px;
+        padding: 0 12px;
+        border: 0.5px solid rgba(39, 39, 39, 0.38);
+        border-radius: 17px;
+        font-size: 9px;
+        font-weight: 300;
+        line-height: 1.1;
+      }
+
+      .problem strong {
+        font-size: 11px;
+        font-weight: 500;
+        text-align: right;
+      }
+
+      .view-all {
+        display: grid;
+        grid-template-columns: 1fr 34px;
+        align-items: center;
+        width: 100%;
+        min-height: 38px;
+        border: 0.5px solid rgba(39, 39, 39, 0.38);
+        border-radius: 19px;
+        padding: 0 14px;
+        background: transparent;
+        color: var(--ink);
+        font-family: var(--font-family);
+        font-size: 10px;
+        font-weight: 400;
+        line-height: 1;
+        text-align: left;
+        text-transform: uppercase;
+      }
+
+      .view-all::after {
+        content: "";
+        justify-self: end;
+        width: 20px;
+        height: 1px;
+        background: var(--ink);
+        box-shadow: 7px -5px 0 -3px var(--ink), 7px 5px 0 -3px var(--ink);
+      }
+
+      .view-all.is-open::after {
+        width: 14px;
+        box-shadow: none;
+      }
+
+      .mentions-list {
+        display: none;
+        gap: 0;
+        margin-top: 10px;
+        border: 0.5px solid rgba(39, 39, 39, 0.38);
+        border-bottom: 0;
+      }
+
+      .mentions-list.is-open {
+        display: grid;
+      }
+
+      .mention-item {
+        display: grid;
+        grid-template-columns: 18px 1fr 42px;
+        gap: 9px;
+        min-height: 58px;
+        padding: 10px 10px 9px;
+        border-bottom: 0.5px solid rgba(39, 39, 39, 0.38);
+      }
+
+      .mention-dot {
+        width: 12px;
+        height: 12px;
+        margin-top: 2px;
+        border: 0.5px solid var(--ink);
+        border-radius: 50%;
+      }
+
+      .mention-name {
+        margin: 0 0 5px;
+        font-size: 10px;
+        font-weight: 600;
+        line-height: 1;
+        text-transform: uppercase;
+      }
+
+      .mention-text {
+        margin: 0;
+        color: #5f5f5f;
+        font-size: 9px;
+        font-weight: 300;
+        line-height: 1.16;
+      }
+
+      .voice-message {
+        display: grid;
+        grid-template-columns: 34px 1fr;
+        align-items: center;
+        gap: 8px;
+        margin-top: 2px;
+      }
+
+      .voice-duration {
+        color: var(--ink);
+        font-size: 9px;
+        font-weight: 400;
+        line-height: 1;
+      }
+
+      .voice-wave {
+        display: grid;
+        grid-template-columns: repeat(18, 1fr);
+        align-items: end;
+        gap: 2px;
+        height: 24px;
+      }
+
+      .voice-wave span {
+        display: block;
+        height: var(--vh);
+        background: rgba(39, 39, 39, 0.42);
+      }
+
+      .mention-meta {
+        color: var(--muted);
+        font-size: 8px;
+        font-weight: 300;
+        line-height: 1.2;
+        text-align: right;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="phone" aria-label="Админка Новая Запись">
+      <div class="screen">
+        <a class="island-title" href="../screen-6/index.html" aria-label="Открыть главный экран">G8 ОБЪЕКТ</a>
+        <a class="help-link" href="../screen-11/index.html" aria-label="Открыть справку">?</a>
+
+        <section class="admin-scroll">
+          <h1 class="page-title">НОВАЯ ЗАПИСЬ</h1>
+          <p class="page-subtitle">статистика обратной связи</p>
+
+          <div class="summary-grid" aria-label="Общие показатели">
+            <div class="summary-cell"><p class="summary-value">1 284</p><p class="summary-label">участника</p></div>
+            <div class="summary-cell"><p class="summary-value">643</p><p class="summary-label">оставили<br />мнение</p></div>
+            <div class="summary-cell"><p class="summary-value">1 927</p><p class="summary-label">записей</p></div>
+            <div class="summary-cell"><p class="summary-value">68%</p><p class="summary-label">охват</p></div>
+          </div>
+
+          <p class="section-note">нажмите на сферу для деталей</p>
+
+          <div id="admin-sections"></div>
+        </section>
+      </div>
+    </main>
+
+    <script>
+      const adminSections = [
+        {
+          title: "схемы",
+          score: "4.1",
+          signals: [83, 14, 54, 15],
+          fill: 64,
+          quote: "схема понятна, но точки перехода хочется видеть раньше",
+          chart: [2, 5, 9, 21, 23, 17, 6],
+          ranks: [["вход", 18, 88], ["карта", 11, 54], ["переход", 7, 34]],
+          problems: [["не видно следующий шаг маршрута", 18], ["схема слишком мелкая на стенде", 9], ["люди ищут точку возврата", 4]],
+        },
+        {
+          title: "звук / av",
+          score: "3.6",
+          signals: [69, 22, 31, 16],
+          fill: 45,
+          quote: "в дальнем углу голос спикера теряется за общим шумом",
+          chart: [4, 7, 8, 13, 19, 11, 7],
+          ranks: [["зал 2", 15, 74], ["сцена", 9, 48], ["микрофон", 6, 32]],
+          problems: [["неравномерный звук между рядами", 15], ["эхо во время презентации", 8], ["сложно разобрать вопрос из зала", 5]],
+        },
+        {
+          title: "навигация",
+          score: "3.2",
+          signals: [91, 34, 37, 20],
+          fill: 40,
+          quote: "люди часто спрашивают, где начинается следующий маршрут",
+          chart: [6, 8, 14, 24, 20, 13, 6],
+          ranks: [["лестница", 20, 92], ["карта", 14, 64], ["вход", 8, 38]],
+          problems: [["не хватает стрелок после регистрации", 20], ["карта читается только вблизи", 12], ["переходы между залами неочевидны", 8]],
+        },
+        {
+          title: "стенды / экспо",
+          score: "4.6",
+          signals: [58, 7, 42, 9],
+          fill: 72,
+          quote: "стенды выглядят спокойно и дают время рассмотреть детали",
+          chart: [2, 3, 7, 12, 16, 13, 5],
+          ranks: [["центр", 13, 70], ["правый ряд", 8, 44], ["экран", 5, 28]],
+          problems: [["у части стендов мало света", 7], ["описания хочется поднять выше", 5], ["около экрана быстро собирается очередь", 4]],
+        },
+        {
+          title: "вход / очереди",
+          score: "2.9",
+          signals: [104, 48, 33, 23],
+          fill: 32,
+          quote: "на входе слишком долго неясно, какая очередь двигается быстрее",
+          chart: [10, 13, 19, 29, 24, 7, 2],
+          ranks: [["регистрация", 29, 96], ["гардероб", 18, 62], ["браслеты", 11, 42]],
+          problems: [["не хватает разделения потоков", 29], ["люди теряют подтверждение регистрации", 14], ["очередь сливается с проходом", 9]],
+        },
+        {
+          title: "расписание",
+          score: "3.8",
+          signals: [76, 19, 39, 18],
+          fill: 52,
+          quote: "расписание интересно, но изменения хочется видеть быстрее",
+          chart: [3, 6, 12, 15, 18, 14, 8],
+          ranks: [["тайминг", 16, 72], ["пуши", 10, 48], ["перерыв", 7, 34]],
+          problems: [["сложно понять перенос выступления", 16], ["нет короткого напоминания перед стартом", 9], ["перерывы выглядят случайными", 6]],
+        },
+        {
+          title: "еда / бар",
+          score: "3.5",
+          signals: [88, 27, 43, 18],
+          fill: 48,
+          quote: "бар спасает вечер, но очередь ломает ритм между секциями",
+          chart: [5, 8, 11, 17, 22, 18, 7],
+          ranks: [["бар", 22, 86], ["кофе", 13, 58], ["вода", 8, 36]],
+          problems: [["мало быстрых позиций", 18], ["не видно меню из очереди", 11], ["точка воды нужна ближе к залу", 8]],
+        },
+        {
+          title: "программа",
+          score: "4.7",
+          signals: [112, 8, 86, 18],
+          fill: 82,
+          quote: "программа держит внимание и создает ощущение плотного живого дня",
+          chart: [8, 11, 18, 25, 30, 15, 5],
+          ranks: [["сцена", 30, 94], ["дискуссия", 18, 58], ["питч", 10, 34]],
+          problems: [["хочется больше времени на вопросы", 8], ["часть тем пересекается по времени", 6], ["не все описания одинаково ясные", 4]],
+        },
+        {
+          title: "персонал",
+          score: "4.6",
+          signals: [73, 6, 55, 12],
+          fill: 78,
+          quote: "команда быстро отвечает и мягко возвращает людей в маршрут",
+          chart: [3, 4, 8, 14, 19, 17, 8],
+          ranks: [["вход", 17, 78], ["зал", 12, 56], ["бар", 6, 30]],
+          problems: [["не все волонтеры знают переносы", 6], ["часть ответов звучит слишком тихо", 4], ["нужна единая короткая инструкция", 3]],
+        },
+        {
+          title: "атмосфера",
+          score: "4.8",
+          signals: [126, 5, 101, 20],
+          fill: 88,
+          quote: "пространство ощущается живым, но не перегруженным",
+          chart: [9, 12, 18, 27, 31, 21, 8],
+          ranks: [["зал", 31, 96], ["двор", 18, 58], ["свет", 12, 42]],
+          problems: [["хочется больше тихих мест", 5], ["вечером слишком плотный поток", 4], ["часть зон быстро перегревается", 3]],
+        },
+      ];
+
+      const chartTimes = ["10:00", "12:00", "14:00", "16:00", "18:00", "20:00", "22:00"];
+      const mentionNames = [
+        "Анна Мирова",
+        "Саша Лин",
+        "Мира Волкова",
+        "Лев Орлов",
+        "Соня Тесла",
+        "Майя Кюри",
+        "Рома Фарадей",
+        "Кира Фотон",
+        "Тая Орбита",
+        "Дана Кристалл",
+      ];
+      const mentionTexts = [
+        "я быстро понял куда идти, но в середине маршрута потерял следующий ориентир",
+        "очень спокойно собрано, ничего не давит, хочется просто двигаться дальше",
+        "в момент пика стало тесно, из-за этого часть впечатления смазалась",
+        "главная точка работает хорошо, но подсказка появляется слишком поздно",
+        "мне понравилось, что всё выглядит строго и без лишней декоративности",
+        "я бы добавил один понятный знак перед поворотом, тогда поток не тормозит",
+        "ощущение живое, но в шумном месте тяжело удерживать внимание",
+        "после первого круга стало понятно, как читать пространство целиком",
+        "сервис хороший, но хочется меньше объяснений и больше прямого действия",
+        "самый сильный момент случился там, где люди начали обсуждать увиденное",
+        "я не сразу заметила важную деталь, хотя она реально помогает ориентироваться",
+        "в целом всё работает, но одно место выбивает из общего ритма",
+      ];
+      const mentionTones = ["позитив", "негатив", "нейтр.", "сигнал"];
+      const voicePattern = [7, 13, 18, 10, 22, 15, 9, 20, 12, 16, 24, 11, 19, 14, 8, 21, 17, 10];
+
+      function voiceWaveTemplate(seed) {
+        return voicePattern
+          .map((height, index) => `<span style="--vh: ${Math.max(5, ((height + seed + index * 3) % 24) + 4)}px"></span>`)
+          .join("");
+      }
+
+      function mentionsTemplate(section, sectionIndex) {
+        return Array.from({ length: 7 }, (_, itemIndex) => {
+          const base = sectionIndex * 3 + itemIndex;
+          const name = mentionNames[base % mentionNames.length];
+          const rawText = mentionTexts[(base + section.title.length) % mentionTexts.length];
+          const text = `${rawText}. ${section.title}: ${section.problems[itemIndex % section.problems.length][0]}`;
+          const isVoice = (base + itemIndex) % 3 === 1;
+          const duration = `0:${String(18 + ((base + itemIndex) % 34)).padStart(2, "0")}`;
+          const tone = mentionTones[(base + section.signals[1]) % mentionTones.length];
+          const hour = 13 + Math.floor(itemIndex / 2);
+          const minutes = itemIndex % 2 === 0 ? "00" : "15";
+          return `
+            <div class="mention-item">
+              <span class="mention-dot" aria-hidden="true"></span>
+              <div>
+                <p class="mention-name">${name}</p>
+                ${
+                  isVoice
+                    ? `<div class="voice-message" aria-label="Голосовой отзыв"><span class="voice-duration">${duration}</span><div class="voice-wave">${voiceWaveTemplate(base)}</div></div>`
+                    : `<p class="mention-text">${text}</p>`
+                }
+              </div>
+              <span class="mention-meta">${hour}:${minutes}<br />${tone}</span>
+            </div>
+          `;
+        }).join("");
+      }
+
+      function sectionTemplate(section, index) {
+        const [total, negative, positive, neutral] = section.signals;
+        const negativePercent = Math.round((negative / total) * 100);
+        const positivePercent = Math.round((positive / total) * 100);
+        const neutralPercent = Math.round((neutral / total) * 100);
+
+        return `
+          <article class="admin-card${index === 0 ? " is-open" : ""}">
+            <button class="admin-toggle" type="button" aria-expanded="${index === 0 ? "true" : "false"}">
+              <span class="marker" aria-hidden="true"></span>
+              <span class="toggle-title">${section.title}</span>
+              <span class="toggle-score">${section.score}</span>
+              <span class="toggle-arrow" aria-hidden="true"></span>
+            </button>
+            <div class="admin-panel">
+              <div class="signal-row">
+                <div><p class="signal-value">${total}</p><p class="signal-label">сигнала</p></div>
+                <div><p class="signal-value">${negative}</p><p class="signal-label">негативных<br />(${negativePercent}%)</p></div>
+                <div><p class="signal-value">${positive}</p><p class="signal-label">позитивных<br />(${positivePercent}%)</p></div>
+                <div><p class="signal-value">${neutral}</p><p class="signal-label">нейтральных<br />(${neutralPercent}%)</p></div>
+              </div>
+              <div class="bar-track" aria-hidden="true"><span class="bar-fill" style="width: ${section.fill}%"></span></div>
+              <p class="panel-label">главный сигнал</p>
+              <p class="quote">${section.quote}</p>
+              <p class="panel-label">динамика упоминаний</p>
+              <div class="mini-chart" aria-label="Динамика упоминаний по времени">
+                ${section.chart.map((value, chartIndex) => `<span class="chart-bar" style="--h: ${Math.max(16, value * 3)}px" data-value="${value}" data-time="${chartTimes[chartIndex]}"></span>`).join("")}
+              </div>
+              <p class="panel-label">где чаще всего</p>
+              <div class="rank-list">
+                ${section.ranks.map(([name, value, width]) => `<div class="rank-item"><span class="rank-name">${name}</span><span class="rank-line"><span style="--w: ${width}%"></span></span><span class="rank-value">${value}</span></div>`).join("")}
+              </div>
+              <p class="panel-label">топ проблем</p>
+              <div class="problem-list">
+                ${section.problems.map(([problem, value]) => `<div class="problem"><span>${problem}</span><strong>${value}</strong></div>`).join("")}
+              </div>
+              <button class="view-all" type="button">посмотреть все</button>
+              <div class="mentions-list">${mentionsTemplate(section, index)}</div>
+            </div>
+          </article>
+        `;
+      }
+
+      function setAppScale() {
+        const viewport = window.visualViewport || window;
+        const scale = Math.min(1, viewport.width / 430, viewport.height / 932);
+        document.documentElement.style.setProperty("--app-scale", scale.toString());
+      }
+
+      document.querySelector("#admin-sections").innerHTML = adminSections.map(sectionTemplate).join("");
+
+      document.querySelectorAll(".admin-toggle").forEach((toggle) => {
+        toggle.addEventListener("click", (event) => {
+          const card = event.currentTarget.closest(".admin-card");
+          const isOpen = card.classList.toggle("is-open");
+          event.currentTarget.setAttribute("aria-expanded", String(isOpen));
+        });
+      });
+
+      document.querySelectorAll(".view-all").forEach((button) => {
+        button.addEventListener("click", () => {
+          const list = button.nextElementSibling;
+          const isOpen = list.classList.toggle("is-open");
+          button.classList.toggle("is-open", isOpen);
+        });
+      });
+
+      setAppScale();
+      window.addEventListener("resize", setAppScale);
+      window.visualViewport?.addEventListener("resize", setAppScale);
+    </script>
+  </body>
+</html>

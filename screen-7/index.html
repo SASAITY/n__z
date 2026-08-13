@@ -1,0 +1,1020 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>G8 ОБЪЕКТ - поток</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --frame-width: 430px;
+        --frame-height: 932px;
+        --font-family: "IBM Plex Mono", monospace;
+        --ink: #272727;
+        --paper: #ffffff;
+        --app-scale: 1;
+        --stream-scale: 1;
+        --stream-x: 0px;
+        --stream-y: 0px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+        background: #111111;
+        color: var(--ink);
+        font-family: var(--font-family);
+        letter-spacing: 0;
+      }
+
+      body {
+        display: flex;
+        align-items: flex-start;
+        justify-content: flex-start;
+      }
+
+      .phone {
+        position: relative;
+        width: var(--frame-width);
+        height: var(--frame-height);
+        overflow: hidden;
+        background: var(--paper);
+        transform: scale(var(--app-scale));
+        transform-origin: top center;
+      }
+
+      .phone::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 121px;
+        z-index: 12;
+        width: 188px;
+        height: 106px;
+        border-radius: 0 0 24px 24px;
+        background: #111111;
+      }
+
+      .screen {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        background: var(--paper);
+      }
+
+      .island-title {
+        position: absolute;
+        top: 57px;
+        left: 121px;
+        z-index: 13;
+        display: grid;
+        place-items: center;
+        width: 188px;
+        height: 36px;
+        color: #ffffff;
+        font-size: 24px;
+        font-weight: 600;
+        line-height: 1;
+        text-decoration: none;
+        text-transform: uppercase;
+      }
+
+      .profile {
+        position: absolute;
+        left: 34px;
+        bottom: 10px;
+        width: 52px;
+        height: 52px;
+        text-decoration: none;
+      }
+
+      .profile img {
+        display: block;
+        width: 52px;
+        height: 52px;
+        object-fit: contain;
+      }
+
+      .stream-canvas {
+        position: absolute;
+        left: -456px;
+        top: -688px;
+        width: 1356px;
+        height: 2210px;
+        overflow: hidden;
+        cursor: grab;
+        touch-action: none;
+        transform: translate3d(var(--stream-x), var(--stream-y), 0) scale(var(--stream-scale));
+        transform-origin: center center;
+      }
+
+      .stream-canvas.is-dragging {
+        cursor: grabbing;
+      }
+
+      .stream-shade {
+        position: absolute;
+        left: 0;
+        z-index: 4;
+        width: 430px;
+        height: auto;
+        pointer-events: none;
+      }
+
+      .stream-shade.up {
+        top: 0;
+      }
+
+      .stream-shade.down {
+        bottom: 0;
+        transform-origin: 50% 100%;
+      }
+
+      .stream-shade.down.is-voice-active {
+        animation: menu-voice-response 1.38s ease-in-out infinite;
+      }
+
+      .columns {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        grid-template-columns: repeat(21, 1fr);
+        gap: 4px;
+        transform: translateY(0);
+      }
+
+      .column {
+        position: relative;
+        min-width: 0;
+        padding-top: var(--top, 0px);
+        animation: column-drift var(--duration, 18s) ease-in-out infinite;
+        animation-delay: var(--delay, 0s);
+      }
+
+      .column:nth-child(even) {
+        transform: translateY(-42px);
+      }
+
+      .stream-canvas.is-voice-active .column {
+        animation-name: column-drift, column-voice;
+        animation-duration: var(--duration, 18s), var(--voice-duration, 0.72s);
+        animation-timing-function: ease-in-out, ease-in-out;
+        animation-iteration-count: infinite, infinite;
+        animation-delay: var(--delay, 0s), var(--voice-delay, 0s);
+      }
+
+      .feed-card {
+        width: 100%;
+        min-height: 0;
+        margin-bottom: 3px;
+        padding: 4px 3px;
+        border: 0.5px solid rgba(39, 39, 39, 0.35);
+        background: rgba(255, 255, 255, 0.76);
+      }
+
+      .feed-card.is-opinion {
+        min-height: 0;
+      }
+
+      .feed-card.is-audio {
+        min-height: 0;
+      }
+
+      .feed-card.is-photo {
+        min-height: 0;
+      }
+
+      .feed-card.is-title {
+        min-height: 0;
+        display: flex;
+        align-items: end;
+        border: 0;
+        padding: 0 0 2px;
+        background: transparent;
+      }
+
+      .feed-title {
+        max-width: 100%;
+        overflow-wrap: anywhere;
+        font-size: 16px;
+        font-weight: 600;
+        line-height: 0.96;
+        text-transform: uppercase;
+      }
+
+      .feed-meta {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        margin-bottom: 3px;
+        font-size: 5.5px;
+        font-weight: 500;
+        line-height: 1;
+        text-transform: uppercase;
+      }
+
+      .feed-dot {
+        width: 8px;
+        height: 8px;
+        border: 0.5px solid var(--ink);
+        border-radius: 50%;
+      }
+
+      .feed-text {
+        min-height: 0;
+        font-size: 5.3px;
+        font-weight: 300;
+        line-height: 1.18;
+        word-break: break-word;
+      }
+
+      .feed-card.is-opinion .feed-text {
+        font-size: 5.6px;
+        line-height: 1.22;
+      }
+
+      .feed-card.is-photo .feed-text {
+        min-height: 0;
+      }
+
+      .feed-text::after {
+        content: "";
+        display: inline-block;
+        width: 3px;
+        height: 7px;
+        margin-left: 1px;
+        background: rgba(39, 39, 39, 0.55);
+        animation: caret 780ms steps(1) infinite;
+        vertical-align: -1px;
+      }
+
+      .feed-card.is-filled .feed-text::after,
+      .feed-card.is-audio .feed-text::after {
+        content: none;
+      }
+
+      .audio-track {
+        display: flex;
+        align-items: end;
+        gap: 2px;
+        height: 22px;
+        margin-top: 5px;
+      }
+
+      .audio-track span {
+        width: 2px;
+        min-height: 4px;
+        background: rgba(39, 39, 39, 0.42);
+        animation: audio-pulse 1.6s ease-in-out infinite;
+        animation-delay: calc(var(--i) * -0.08s);
+      }
+
+      .photo-box {
+        width: 100%;
+        height: var(--photo-height, 46px);
+        margin: 4px 0 3px;
+        background: #272727;
+      }
+
+      .feed-card {
+        animation: card-drift var(--card-duration, 11s) ease-in-out infinite;
+        animation-delay: var(--card-delay, 0s);
+      }
+
+      .ghost-line {
+        display: block;
+        height: 5px;
+        margin-bottom: 4px;
+        background: rgba(39, 39, 39, 0.07);
+      }
+
+      .nav {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 38px;
+        z-index: 8;
+        height: 72px;
+      }
+
+      .nav-button {
+        position: absolute;
+        display: grid;
+        place-items: center;
+        border: 0;
+        padding: 0;
+        background: transparent;
+      }
+
+      .eye {
+        right: 27px;
+        bottom: auto;
+        top: -94px;
+        width: 52px;
+        height: 52px;
+      }
+
+      .burger {
+        left: 27px;
+        bottom: auto;
+        top: -94px;
+        width: 52px;
+        height: 52px;
+      }
+
+      .help-link {
+        position: absolute;
+        left: 41px;
+        top: -132px;
+        display: grid;
+        place-items: center;
+        width: 24px;
+        height: 24px;
+        border: 0.5px solid rgba(39, 39, 39, 0.55);
+        border-radius: 50%;
+        color: var(--ink);
+        font-size: 14px;
+        font-weight: 300;
+        line-height: 1;
+        text-decoration: none;
+      }
+
+      .mic {
+        left: 179px;
+        bottom: 0;
+        width: 72px;
+        height: 72px;
+        overflow: visible;
+      }
+
+      .admin-link {
+        position: absolute;
+        left: 179px;
+        top: 84px;
+        width: 72px;
+        color: #999999;
+        font-size: 12px;
+        font-weight: 300;
+        line-height: 1;
+        text-align: center;
+        text-decoration: underline;
+        text-transform: lowercase;
+      }
+
+      .recording-field {
+        position: absolute;
+        inset: 0;
+        z-index: 7;
+        pointer-events: none;
+      }
+
+      .recording-wave {
+        position: absolute;
+        left: 215px;
+        top: 856px;
+        width: 72px;
+        height: 72px;
+        border: 1px solid rgba(39, 39, 39, 0.2);
+        border-radius: 50%;
+        background: rgba(39, 39, 39, 0.035);
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(1);
+        pointer-events: none;
+        animation: mic-wave 6.2s cubic-bezier(0.08, 0.62, 0.18, 1) 1 forwards;
+      }
+
+      .qr {
+        right: 34px;
+        bottom: 14px;
+        width: 44px;
+        height: 44px;
+        opacity: 0.8;
+      }
+
+      .nav-button img {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+
+      .island-title:focus-visible,
+      .profile:focus-visible {
+        outline: 1px solid var(--ink);
+        outline-offset: 3px;
+      }
+
+      @keyframes column-drift {
+        0%,
+        100% {
+          translate: 0 0;
+        }
+
+        50% {
+          translate: 0 -26px;
+        }
+      }
+
+      @keyframes column-voice {
+        0%,
+        100% {
+          transform: translate3d(0, 0, 0);
+        }
+
+        25% {
+          transform: translate3d(var(--voice-x, 1px), var(--voice-y, -1px), 0);
+        }
+
+        50% {
+          transform: translate3d(calc(var(--voice-x, 1px) * -0.7), calc(var(--voice-y, -1px) * 0.8), 0);
+        }
+
+        75% {
+          transform: translate3d(calc(var(--voice-x, 1px) * 0.45), calc(var(--voice-y, -1px) * -0.65), 0);
+        }
+      }
+
+      @keyframes menu-voice-response {
+        0%,
+        100% {
+          opacity: 1;
+          transform: translate3d(0, 0, 0) scaleY(1);
+        }
+
+        28% {
+          opacity: 0.92;
+          transform: translate3d(0, -1px, 0) scaleY(1.018);
+        }
+
+        58% {
+          opacity: 0.98;
+          transform: translate3d(0, 1px, 0) scaleY(0.992);
+        }
+      }
+
+      @keyframes mic-wave {
+        0% {
+          opacity: 0.38;
+          transform: translate(-50%, -50%) scale(0.94);
+        }
+
+        68% {
+          opacity: 0.18;
+        }
+
+        100% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(25.2);
+        }
+      }
+
+      @keyframes caret {
+        0%,
+        52% {
+          opacity: 1;
+        }
+
+        53%,
+        100% {
+          opacity: 0;
+        }
+      }
+
+      @keyframes audio-pulse {
+        0%,
+        100% {
+          transform: scaleY(0.62);
+          opacity: 0.46;
+        }
+
+        50% {
+          transform: scaleY(1.18);
+          opacity: 0.82;
+        }
+      }
+
+      @keyframes card-drift {
+        0%,
+        100% {
+          translate: 0 0;
+        }
+
+        50% {
+          translate: 0 var(--card-shift, -6px);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="phone" aria-label="Поток G8 объект">
+      <div class="screen">
+        <section class="stream-canvas" aria-label="Живой поток отзывов">
+          <div class="columns" id="columns"></div>
+        </section>
+        <div class="recording-field" aria-hidden="true"></div>
+        <img class="stream-shade down" src="../assets/menu-rectangle-screen-7.svg" alt="" aria-hidden="true" />
+
+        <a class="island-title" href="../screen-6/index.html" aria-label="Открыть главный экран">G8 ОБЪЕКТ</a>
+
+        <nav class="nav" aria-label="Основная навигация">
+          <a class="nav-button profile" href="../screen-4/index.html" aria-label="Мое">
+            <img src="../assets/avatar-screen-7.svg" alt="Ваш аватар" />
+          </a>
+          <a class="nav-button eye" href="../screen-6/index.html" aria-label="Полный обзор главного пузыря">
+            <img src="../assets/eye-ellipse.svg" alt="" />
+          </a>
+          <a class="nav-button burger" href="../screen-8/index.html" aria-label="Открыть секции">
+            <img src="../assets/burger-screen-7.svg" alt="" />
+          </a>
+          <a class="help-link" href="../screen-11/index.html" aria-label="Открыть справку">?</a>
+          <button class="nav-button mic" type="button" aria-label="Создать запись голосом">
+            <img src="../assets/mic.png" alt="" />
+          </button>
+          <a class="admin-link" href="../screen-9/index.html">админ</a>
+          <a class="nav-button qr" href="../screen-10/index.html" aria-label="Открыть QR сканер">
+            <img src="../assets/qr.png" alt="" />
+          </a>
+        </nav>
+      </div>
+    </main>
+
+    <script>
+      const columnsNode = document.querySelector("#columns");
+      const topics = [
+        "ивенты",
+        "брендинг",
+        "реклама",
+        "музыка",
+        "кино",
+        "ии",
+        "анимация",
+        "цифровые продукты",
+        "архитектура",
+        "диджитал",
+      ];
+      const names = [
+        "преданный идеалист",
+        "альфа",
+        "анима анонимус",
+        "махатма веб",
+        "да, будду",
+        "сан киртан",
+        "махатма",
+        "веб",
+        "идеалист",
+        "наблюдатель",
+        "мария",
+        "анна",
+        "саша",
+        "лев",
+        "юля",
+        "мира",
+        "ио",
+        "алиса",
+        "соня",
+        "ника",
+        "вера",
+        "ира",
+        "оля",
+        "ева",
+        "майя",
+        "тао",
+        "рема",
+        "агни",
+        "сурья",
+        "арья",
+        "майтри",
+        "мантра",
+        "платон",
+        "сократ",
+        "гипатия",
+        "ньютон",
+        "тесла",
+        "кюри",
+        "бор",
+        "планк",
+        "фарадей",
+        "лавуазье",
+        "менделеев",
+        "авогадро",
+        "резерфорд",
+        "паули",
+        "ферми",
+        "галилей",
+        "кеплер",
+        "коперник",
+        "фотон",
+        "нейтрино",
+        "кварк",
+        "ион",
+        "атом",
+        "изотоп",
+        "плазма",
+        "эфир",
+        "спектр",
+        "орбита",
+        "кристалл",
+        "реактив",
+        "алхимик",
+        "проводник",
+        "созерцатель",
+        "исследователь",
+      ];
+      const streamCamera = {
+        scale: 1,
+        x: 0,
+        y: 0,
+        isDragging: false,
+        lastX: 0,
+        lastY: 0,
+        pinchDistance: 0,
+        startScale: 1,
+      };
+      const fragments = [
+        "я вижу как объект отвечает на присутствие зрителя",
+        "это ощущается как след мысли внутри белого пространства",
+        "форма становится яснее когда мнение звучит вслух",
+        "свет идеи переходит от автора к человеку напротив",
+        "работа не заканчивается в момент показа",
+        "внутри появляется ритм и возникает личная связь",
+        "голос собирает смысл быстрее чем привычное описание",
+        "каждый отзыв добавляет новый слой восприятия",
+        "здесь искусство становится системой живых реакций",
+        "я чувствую не экспонат а движение между людьми",
+      ];
+      const fragmentStarts = [
+        "сначала кажется что работа молчит",
+        "я задерживаюсь у края изображения",
+        "в этой точке взгляд будто меняет скорость",
+        "мне слышится не объяснение а внутренний ритм",
+        "после паузы объект начинает собираться заново",
+        "каждый слой выглядит как чужая мысль рядом с моей",
+        "я не сразу понимаю где заканчивается автор",
+        "внутри возникает странная точность",
+        "это похоже на разговор без прямого вопроса",
+        "свет здесь ведет себя почти как голос",
+        "мне важно что реакция не выглядит финальной",
+        "пространство будто оставляет место для ошибки",
+        "я смотрю и замечаю собственную задержку",
+        "форма не давит а просит ответить",
+        "впечатление появляется не сразу а через дыхание",
+      ];
+      const fragmentMiddles = [
+        "и из-за этого смысл сдвигается ближе к человеку",
+        "потому что внимание становится частью материала",
+        "как будто отзыв добавляет новый край к работе",
+        "и тогда зритель перестает быть просто наблюдателем",
+        "будто белое поле хранит след недосказанного",
+        "а голос собирает то что взгляд не успел назвать",
+        "поэтому обычное описание превращается в действие",
+        "и между людьми появляется тонкая общая поверхность",
+        "словно объект на секунду принимает чужую память",
+        "а затем возвращает ее уже измененной",
+        "и это делает работу менее закрытой",
+        "словно мнение становится маленьким жестом внутри системы",
+      ];
+      const fragmentEnds = [
+        "это хочется оставить как часть экспозиции",
+        "после этого работа кажется более живой",
+        "мне нравится эта незавершенность",
+        "в этом есть спокойная честность",
+        "получается не ответ а продолжение",
+        "так возникает личная связь",
+        "я бы вернулась к этому позже",
+        "из этого собирается новый слой",
+        "и поэтому опыт не заканчивается экраном",
+        "это звучит тише чем текст но точнее",
+        "в этом много воздуха",
+        "мне интересно что скажет следующий человек",
+      ];
+      const longFragments = [
+        "я долго смотрела на работу и сначала пыталась понять где заканчивается форма и начинается реакция зрителя но потом стало ясно что сама пауза между взглядом и словом уже является частью объекта поэтому мнение не просто описывает искусство а продолжает его движение в другом человеке",
+        "в этом опыте мне важна не законченность а способность работы менять состояние рядом с собой каждый следующий голос будто добавляет новую поверхность и из этих поверхностей собирается не архив а живой слой присутствия",
+        "кажется что художник оставляет не финальную точку а пространство для ответа и когда зритель говорит о том что увидел возникает дополнительный материал который невозможно заранее спроектировать но можно услышать и сохранить как часть произведения",
+        "я сначала пытаюсь ухватить сюжет но постепенно понимаю что важнее не сюжет а способ моего внимания работа будто проверяет насколько честно я могу назвать свое ощущение и не спрятаться за привычные слова",
+        "в какой то момент изображение перестает быть объектом напротив и становится поводом для внутреннего движения оно не требует правильной оценки но создает место где можно оставить голос без давления",
+        "мне кажется что такие отзывы нужны не для объяснения искусства а для того чтобы показать сколько разных траекторий возникает от одной точки каждый человек добавляет не комментарий а маленькую координату",
+        "я воспринимаю это как мягкий механизм памяти где слова людей не закрывают работу а наоборот делают ее более проницаемой чем больше голосов появляется рядом тем меньше хочется искать один главный смысл",
+      ];
+      let titleCounter = 0;
+      let nameCounter = 0;
+
+      function setAppScale() {
+        const viewport = window.visualViewport || window;
+        const scale = Math.min(1, viewport.width / 430, viewport.height / 932);
+        document.documentElement.style.setProperty("--app-scale", scale.toString());
+      }
+
+      function setStreamCamera(scale = streamCamera.scale, x = streamCamera.x, y = streamCamera.y) {
+        streamCamera.scale = Math.min(2.8, Math.max(0.72, scale));
+        streamCamera.x = Math.max(-820, Math.min(820, x));
+        streamCamera.y = Math.max(-920, Math.min(920, y));
+
+        if (Math.abs(streamCamera.scale - 1) < 0.01) streamCamera.scale = 1;
+
+        document.documentElement.style.setProperty("--stream-scale", streamCamera.scale.toString());
+        document.documentElement.style.setProperty("--stream-x", `${streamCamera.x}px`);
+        document.documentElement.style.setProperty("--stream-y", `${streamCamera.y}px`);
+      }
+
+      function resetStreamCamera() {
+        setStreamCamera(1, 0, 0);
+      }
+
+      function makeFragment(columnIndex, cardIndex) {
+        const start = fragmentStarts[(columnIndex * 7 + cardIndex * 3) % fragmentStarts.length];
+        const middle = fragmentMiddles[(columnIndex * 5 + cardIndex * 11) % fragmentMiddles.length];
+        const end = fragmentEnds[(columnIndex * 13 + cardIndex * 2) % fragmentEnds.length];
+        const base = fragments[(columnIndex * 3 + cardIndex * 5) % fragments.length];
+
+        if ((columnIndex + cardIndex) % 5 === 0) return `${start}, ${middle}. ${end}`;
+        if ((columnIndex + cardIndex) % 4 === 0) return `${base}. ${end}`;
+        if ((columnIndex + cardIndex) % 3 === 0) return `${start}. ${base}`;
+        return `${start}, ${middle}`;
+      }
+
+      function makeCard(columnIndex, cardIndex) {
+        const card = document.createElement("article");
+        card.className = "feed-card";
+        const variant = (columnIndex * 5 + cardIndex * 3) % 9;
+        card.style.setProperty("--card-duration", `${8 + ((columnIndex + cardIndex) % 7)}s`);
+        card.style.setProperty("--card-delay", `${(columnIndex * -0.9 + cardIndex * 0.37).toFixed(2)}s`);
+        card.style.setProperty("--card-shift", `${-3 - ((columnIndex + cardIndex) % 9)}px`);
+
+        if ((columnIndex + cardIndex) % 8 === 0) {
+          card.classList.add("is-title");
+          card.innerHTML = `<div class="feed-title">${topics[titleCounter % topics.length]}</div>`;
+          titleCounter += 1;
+          return card;
+        }
+
+        const meta = document.createElement("div");
+        meta.className = "feed-meta";
+        const name = names[nameCounter % names.length];
+        nameCounter += 1;
+        meta.innerHTML = `<span class="feed-dot"></span><span>${name}</span>`;
+
+        const text = document.createElement("div");
+        text.className = "feed-text";
+        text.dataset.fullText = makeFragment(columnIndex, cardIndex);
+
+        if ((columnIndex + cardIndex * 2) % 17 === 3) {
+          card.classList.add("is-opinion", "is-filled");
+          const longText = longFragments[(columnIndex + cardIndex) % longFragments.length];
+          text.dataset.fullText = `${longText} ${makeFragment(columnIndex + 2, cardIndex + 5)} ${makeFragment(
+            columnIndex + 7,
+            cardIndex + 3,
+          )}`;
+          text.textContent = text.dataset.fullText;
+          card.append(meta, text);
+          return card;
+        }
+
+        if ((columnIndex * 3 + cardIndex) % 11 === 5) {
+          card.classList.add("is-photo");
+          if (variant % 2 === 0) card.classList.add("is-filled");
+          const photo = document.createElement("div");
+          photo.className = "photo-box";
+          photo.style.setProperty("--photo-height", `${34 + ((columnIndex + cardIndex) % 4) * 11}px`);
+          text.textContent = variant % 2 === 0 ? text.dataset.fullText : "";
+          card.append(meta, photo, text);
+          return card;
+        }
+
+        if ((columnIndex * 7 + cardIndex * 5) % 19 === 4) {
+          card.classList.add("is-audio");
+          text.textContent = "голосовое мнение";
+          const audio = document.createElement("div");
+          audio.className = "audio-track";
+          for (let i = 0; i < 18; i += 1) {
+            const bar = document.createElement("span");
+            bar.style.setProperty("--i", i.toString());
+            bar.style.height = `${5 + ((i * 7 + columnIndex * 3 + cardIndex) % 23)}px`;
+            audio.append(bar);
+          }
+          card.append(meta, text, audio);
+          return card;
+        }
+
+        if (variant === 0 || variant === 4 || variant === 6) {
+          card.classList.add("is-filled");
+          text.textContent = text.dataset.fullText;
+        }
+
+        card.append(meta, text);
+        return card;
+      }
+
+      function typeInto(node, text, speed) {
+        let index = 0;
+        const timer = window.setInterval(() => {
+          node.textContent = text.slice(0, index);
+          index += 1;
+          if (index > text.length) window.clearInterval(timer);
+        }, speed);
+      }
+
+      function seedColumns() {
+        for (let columnIndex = 0; columnIndex < 21; columnIndex += 1) {
+          const column = document.createElement("div");
+          column.className = "column";
+          column.style.setProperty("--top", `${-260 + ((columnIndex * 37) % 220)}px`);
+          column.style.setProperty("--duration", `${15 + (columnIndex % 7) * 2}s`);
+          column.style.setProperty("--delay", `${columnIndex * -1.7}s`);
+          column.style.setProperty("--voice-duration", `${0.58 + (columnIndex % 6) * 0.07}s`);
+          column.style.setProperty("--voice-delay", `${columnIndex * -0.09}s`);
+          column.style.setProperty("--voice-x", `${((columnIndex % 5) - 2) * 0.75}px`);
+          column.style.setProperty("--voice-y", `${(((columnIndex * 3) % 5) - 2) * 0.65}px`);
+
+          for (let cardIndex = 0; cardIndex < 34; cardIndex += 1) {
+            column.append(makeCard(columnIndex, cardIndex));
+          }
+
+          columnsNode.append(column);
+        }
+
+        document.querySelectorAll(".feed-text:not(.is-ready)").forEach((node, index) => {
+          if (node.textContent.trim()) return;
+          const delay = 160 + index * 85;
+          window.setTimeout(() => typeInto(node, node.dataset.fullText, 22 + (index % 4) * 8), delay);
+        });
+      }
+
+      function appendLiveCards() {
+        const columns = [...document.querySelectorAll(".column")];
+        let counter = 0;
+
+        window.setInterval(() => {
+          const column = columns[counter % columns.length];
+          const card = makeCard(counter, counter + 11);
+          column.prepend(card);
+          const text = card.querySelector(".feed-text");
+
+          if (text && !text.textContent.trim()) {
+            typeInto(text, text.dataset.fullText, 18 + (counter % 5) * 7);
+          }
+
+          if (column.children.length > 38) {
+            column.lastElementChild?.remove();
+          }
+
+          counter += 1;
+        }, 1150);
+      }
+
+      function startStreamNavigation() {
+        const canvas = document.querySelector(".stream-canvas");
+        if (!canvas) return;
+
+        canvas.addEventListener(
+          "wheel",
+          (event) => {
+            event.preventDefault();
+            const delta = event.deltaY < 0 ? 0.08 : -0.08;
+            setStreamCamera(streamCamera.scale + delta);
+          },
+          { passive: false },
+        );
+
+        canvas.addEventListener("pointerdown", (event) => {
+          if (event.pointerType === "touch") return;
+          streamCamera.isDragging = true;
+          streamCamera.lastX = event.clientX;
+          streamCamera.lastY = event.clientY;
+          canvas.classList.add("is-dragging");
+          canvas.setPointerCapture?.(event.pointerId);
+        });
+
+        canvas.addEventListener("pointermove", (event) => {
+          if (!streamCamera.isDragging) return;
+          const dx = event.clientX - streamCamera.lastX;
+          const dy = event.clientY - streamCamera.lastY;
+          streamCamera.lastX = event.clientX;
+          streamCamera.lastY = event.clientY;
+          setStreamCamera(streamCamera.scale, streamCamera.x + dx, streamCamera.y + dy);
+        });
+
+        function stopDragging() {
+          streamCamera.isDragging = false;
+          canvas.classList.remove("is-dragging");
+        }
+
+        canvas.addEventListener("pointerup", stopDragging);
+        canvas.addEventListener("pointercancel", stopDragging);
+        canvas.addEventListener("pointerleave", stopDragging);
+
+        canvas.addEventListener(
+          "touchstart",
+          (event) => {
+            if (event.touches.length === 1) {
+              streamCamera.isDragging = true;
+              streamCamera.lastX = event.touches[0].clientX;
+              streamCamera.lastY = event.touches[0].clientY;
+              return;
+            }
+
+            if (event.touches.length === 2) {
+              const [first, second] = event.touches;
+              streamCamera.pinchDistance = Math.hypot(first.clientX - second.clientX, first.clientY - second.clientY);
+              streamCamera.startScale = streamCamera.scale;
+            }
+          },
+          { passive: false },
+        );
+
+        canvas.addEventListener(
+          "touchmove",
+          (event) => {
+            event.preventDefault();
+
+            if (event.touches.length === 1 && streamCamera.isDragging) {
+              const touch = event.touches[0];
+              const dx = touch.clientX - streamCamera.lastX;
+              const dy = touch.clientY - streamCamera.lastY;
+              streamCamera.lastX = touch.clientX;
+              streamCamera.lastY = touch.clientY;
+              setStreamCamera(streamCamera.scale, streamCamera.x + dx, streamCamera.y + dy);
+              return;
+            }
+
+            if (event.touches.length === 2 && streamCamera.pinchDistance) {
+              const [first, second] = event.touches;
+              const distance = Math.hypot(first.clientX - second.clientX, first.clientY - second.clientY);
+              setStreamCamera(streamCamera.startScale * (distance / streamCamera.pinchDistance));
+            }
+          },
+          { passive: false },
+        );
+
+        canvas.addEventListener("touchend", (event) => {
+          if (event.touches.length === 0) streamCamera.isDragging = false;
+          if (event.touches.length < 2) streamCamera.pinchDistance = 0;
+        });
+
+      }
+
+      function startMicHoldFeedback() {
+        const mic = document.querySelector(".mic");
+        const recordingField = document.querySelector(".recording-field");
+        const canvas = document.querySelector(".stream-canvas");
+        const menuShade = document.querySelector(".stream-shade.down");
+        if (!mic || !recordingField || !canvas || !menuShade) return;
+
+        let waveInterval = 0;
+        let isRecording = false;
+
+        function emitVoiceWave() {
+          const wave = document.createElement("span");
+          wave.className = "recording-wave";
+          recordingField.append(wave);
+          window.setTimeout(() => wave.remove(), 6400);
+        }
+
+        function startRecordingVisual(event) {
+          event?.preventDefault();
+          if (isRecording) return;
+
+          isRecording = true;
+          canvas.classList.add("is-voice-active");
+          menuShade.classList.add("is-voice-active");
+          emitVoiceWave();
+          waveInterval = window.setInterval(emitVoiceWave, 460);
+        }
+
+        function stopRecordingVisual() {
+          isRecording = false;
+          canvas.classList.remove("is-voice-active");
+          menuShade.classList.remove("is-voice-active");
+          window.clearInterval(waveInterval);
+        }
+
+        mic.addEventListener("pointerdown", startRecordingVisual);
+        mic.addEventListener("pointerup", stopRecordingVisual);
+        mic.addEventListener("pointercancel", stopRecordingVisual);
+        mic.addEventListener("pointerleave", stopRecordingVisual);
+        mic.addEventListener("click", (event) => {
+          event.preventDefault();
+        });
+      }
+
+      setAppScale();
+      seedColumns();
+      appendLiveCards();
+      startStreamNavigation();
+      startMicHoldFeedback();
+      window.addEventListener("resize", setAppScale);
+      window.visualViewport?.addEventListener("resize", setAppScale);
+    </script>
+  </body>
+</html>

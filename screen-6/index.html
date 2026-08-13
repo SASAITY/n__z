@@ -1,0 +1,2194 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>G8 ОБЪЕКТ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --frame-width: 430px;
+        --frame-height: 932px;
+        --grid-margin: 25px;
+        --font-family: "IBM Plex Mono", monospace;
+        --ink: #272727;
+        --line: #8f8f8f;
+        --soft-line: rgba(39, 39, 39, 0.24);
+        --paper: #ffffff;
+        --app-scale: 1;
+        --canvas-scale: 1;
+        --canvas-x: 0px;
+        --canvas-y: 0px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+        background: #111111;
+        color: var(--ink);
+        font-family: var(--font-family);
+        letter-spacing: 0;
+      }
+
+      body {
+        display: flex;
+        align-items: flex-start;
+        justify-content: flex-start;
+      }
+
+      .phone {
+        position: relative;
+        width: var(--frame-width);
+        height: var(--frame-height);
+        margin: 0;
+        overflow: hidden;
+        background: var(--paper);
+        border-radius: 0;
+        transform: scale(var(--app-scale));
+        transform-origin: top center;
+      }
+
+      .phone::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 121px;
+        z-index: 12;
+        width: 188px;
+        height: 106px;
+        border-radius: 0 0 24px 24px;
+        background: #111111;
+      }
+
+      .screen {
+        position: absolute;
+        inset: 0;
+        width: var(--frame-width);
+        height: var(--frame-height);
+        overflow: hidden;
+        background: var(--paper);
+      }
+
+      .island-title {
+        position: absolute;
+        top: 57px;
+        left: 121px;
+        z-index: 13;
+        display: grid;
+        place-items: center;
+        width: 188px;
+        height: 36px;
+        color: #ffffff;
+        font-size: 24px;
+        font-weight: 600;
+        line-height: 1;
+        text-decoration: none;
+        text-transform: uppercase;
+      }
+
+      .profile {
+        position: absolute;
+        left: 34px;
+        bottom: 10px;
+        width: 52px;
+        height: 52px;
+        text-decoration: none;
+      }
+
+      .profile img {
+        display: block;
+        width: 52px;
+        height: 52px;
+        object-fit: contain;
+      }
+
+      .object-stage {
+        position: absolute;
+        left: 0;
+        top: 174px;
+        width: var(--frame-width);
+        height: 552px;
+        touch-action: none;
+        transform: translate3d(var(--canvas-x), var(--canvas-y), 0) scale(var(--canvas-scale));
+        transform-origin: center 268px;
+      }
+
+      .pulse {
+        position: absolute;
+        left: 50%;
+        top: 268px;
+        width: 420px;
+        height: 420px;
+        border: 0.5px solid rgba(39, 39, 39, 0.14);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        animation: pulse 8s ease-in-out infinite;
+      }
+
+      .pulse:nth-child(1) {
+        animation-delay: 0s;
+      }
+
+      .pulse:nth-child(2) {
+        width: 468px;
+        height: 468px;
+        animation-delay: -1.6s;
+      }
+
+      .pulse:nth-child(3) {
+        width: 516px;
+        height: 516px;
+        animation-delay: -3.2s;
+      }
+
+      .pulse:nth-child(4) {
+        width: 564px;
+        height: 564px;
+        animation-delay: -4.8s;
+      }
+
+      .main-object {
+        position: absolute;
+        left: 5px;
+        top: 58px;
+        width: 420px;
+        height: 420px;
+        border: 0.75px solid var(--ink);
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.58);
+        animation: object-breath 6s ease-in-out infinite;
+      }
+
+      .main-object.is-tapped {
+        animation: object-tap 420ms ease-out, object-breath 6s ease-in-out 420ms infinite;
+      }
+
+      .main-object.is-voice-active {
+        animation: object-voice 780ms ease-in-out infinite;
+      }
+
+      .object-stage.is-tapped .pulse {
+        animation: pulse-tap 520ms ease-out;
+      }
+
+      .bubble {
+        position: absolute;
+        display: grid;
+        place-items: center;
+        overflow: visible;
+        border: 0.5px solid var(--ink);
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.42);
+        color: var(--ink);
+        font-size: 10px;
+        font-weight: 500;
+        line-height: 1.08;
+        text-align: center;
+        text-transform: uppercase;
+        will-change: transform;
+        transform: translate3d(0, 0, 0);
+        transition:
+          left 640ms ease,
+          top 640ms ease,
+          width 640ms ease,
+          height 640ms ease,
+          opacity 360ms ease,
+          border-color 360ms ease;
+      }
+
+      .bubble-label {
+        position: relative;
+        z-index: 2;
+      }
+
+      .b-events {
+        left: 74px;
+        top: 89px;
+        width: 102px;
+        height: 102px;
+        --duration: 8.5s;
+      }
+
+      .b-branding {
+        left: 183px;
+        top: 48px;
+        width: 54px;
+        height: 54px;
+        font-size: 7px;
+        --duration: 9.5s;
+      }
+
+      .b-ads {
+        left: 243px;
+        top: 73px;
+        width: 124px;
+        height: 124px;
+        --duration: 10s;
+      }
+
+      .b-music {
+        left: 34px;
+        top: 199px;
+        width: 72px;
+        height: 72px;
+        --duration: 8s;
+      }
+
+      .b-cinema {
+        left: 174px;
+        top: 179px;
+        width: 62px;
+        height: 62px;
+        font-size: 8px;
+        --duration: 9s;
+      }
+
+      .b-ai {
+        left: 226px;
+        top: 202px;
+        width: 68px;
+        height: 68px;
+        --duration: 8.75s;
+      }
+
+      .b-animation {
+        left: 303px;
+        top: 218px;
+        width: 84px;
+        height: 84px;
+        --duration: 9.25s;
+      }
+
+      .b-digital {
+        left: 81px;
+        top: 246px;
+        width: 118px;
+        height: 118px;
+        --duration: 10.5s;
+      }
+
+      .b-architecture {
+        left: 218px;
+        top: 271px;
+        width: 104px;
+        height: 104px;
+        font-size: 9px;
+        --duration: 8.25s;
+      }
+
+      .b-digital-small {
+        left: 173px;
+        top: 338px;
+        width: 54px;
+        height: 54px;
+        font-size: 7px;
+        --duration: 9.75s;
+      }
+
+      .child-bubbles {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 360ms ease 240ms;
+      }
+
+      .child-bubble {
+        position: absolute;
+        display: grid;
+        place-items: center;
+        overflow: visible;
+        border: 0.5px solid var(--ink);
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.56);
+        color: var(--ink);
+        font-size: 7px;
+        font-weight: 500;
+        line-height: 1.08;
+        text-align: center;
+        text-transform: uppercase;
+      }
+
+      .child-title {
+        position: relative;
+        z-index: 2;
+      }
+
+      .micro-bubbles {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 300ms ease 180ms;
+      }
+
+      .micro-bubble {
+        position: absolute;
+        display: grid;
+        place-items: center;
+        border: 0.5px solid var(--ink);
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.62);
+        color: var(--ink);
+        font-size: 8px;
+        font-weight: 500;
+        line-height: 1.05;
+        text-align: center;
+        text-transform: uppercase;
+      }
+
+      .child-visual,
+      .child-interface {
+        left: 28px;
+        top: 75px;
+        width: 78px;
+        height: 78px;
+      }
+
+      .child-concept,
+      .child-breakthrough {
+        left: 139px;
+        top: 73px;
+        width: 82px;
+        height: 82px;
+      }
+
+      .child-genre,
+      .child-function {
+        left: 88px;
+        top: 141px;
+        width: 78px;
+        height: 78px;
+      }
+
+      .child-echo,
+      .child-app {
+        left: 37px;
+        top: 155px;
+        width: 50px;
+        height: 50px;
+      }
+
+      .child-sound,
+      .child-site {
+        left: 168px;
+        top: 154px;
+        width: 54px;
+        height: 54px;
+      }
+
+      .child-execution {
+        left: 96px;
+        top: 46px;
+        width: 66px;
+        height: 66px;
+      }
+
+      .child-integrated {
+        left: 18px;
+        top: 70px;
+        width: 70px;
+        height: 70px;
+      }
+
+      .child-craft {
+        left: 93px;
+        top: 42px;
+        width: 54px;
+        height: 54px;
+      }
+
+      .child-video {
+        left: 159px;
+        top: 65px;
+        width: 58px;
+        height: 58px;
+      }
+
+      .child-social {
+        left: 41px;
+        top: 139px;
+        width: 66px;
+        height: 66px;
+      }
+
+      .child-print {
+        left: 113px;
+        top: 120px;
+        width: 67px;
+        height: 67px;
+      }
+
+      .child-innovation {
+        left: 177px;
+        top: 135px;
+        width: 56px;
+        height: 56px;
+      }
+
+      .child-nonstandard {
+        left: 79px;
+        top: 193px;
+        width: 58px;
+        height: 58px;
+      }
+
+      .child-juniors {
+        left: 145px;
+        top: 190px;
+        width: 58px;
+        height: 58px;
+      }
+
+      .child-animation-craft {
+        left: 24px;
+        top: 68px;
+        width: 72px;
+        height: 72px;
+      }
+
+      .child-series {
+        left: 119px;
+        top: 46px;
+        width: 88px;
+        height: 88px;
+      }
+
+      .child-ad-animation {
+        left: 41px;
+        top: 149px;
+        width: 66px;
+        height: 66px;
+      }
+
+      .child-ai-animation {
+        left: 128px;
+        top: 135px;
+        width: 64px;
+        height: 64px;
+      }
+
+      .child-sketches {
+        left: 73px;
+        top: 190px;
+        width: 64px;
+        height: 64px;
+      }
+
+      .child-animation-juniors {
+        left: 156px;
+        top: 188px;
+        width: 58px;
+        height: 58px;
+      }
+
+      .child-blogger {
+        left: 18px;
+        top: 66px;
+        width: 76px;
+        height: 76px;
+      }
+
+      .child-activation {
+        left: 108px;
+        top: 42px;
+        width: 76px;
+        height: 76px;
+      }
+
+      .child-technocreative {
+        left: 174px;
+        top: 88px;
+        width: 62px;
+        height: 62px;
+      }
+
+      .child-viral {
+        left: 40px;
+        top: 149px;
+        width: 54px;
+        height: 54px;
+      }
+
+      .child-ai-craft {
+        left: 107px;
+        top: 132px;
+        width: 58px;
+        height: 58px;
+      }
+
+      .child-social-media {
+        left: 160px;
+        top: 161px;
+        width: 74px;
+        height: 74px;
+      }
+
+      .child-digital-juniors {
+        left: 76px;
+        top: 192px;
+        width: 62px;
+        height: 62px;
+      }
+
+      .child-brand-rules,
+      .child-architectural-project,
+      .child-agents {
+        left: 24px;
+        top: 68px;
+        width: 72px;
+        height: 72px;
+      }
+
+      .child-brand-reform,
+      .child-expo-design,
+      .child-creator-tools {
+        left: 119px;
+        top: 46px;
+        width: 88px;
+        height: 88px;
+      }
+
+      .child-pack-rules,
+      .child-territory-branding,
+      .child-ai-juniors {
+        left: 41px;
+        top: 149px;
+        width: 66px;
+        height: 66px;
+      }
+
+      .child-territory-branding {
+        left: 32px;
+        top: 136px;
+        width: 88px;
+        height: 88px;
+      }
+
+      .child-pack-reform,
+      .child-improvement,
+      .child-ai-experience {
+        left: 128px;
+        top: 135px;
+        width: 64px;
+        height: 64px;
+      }
+
+      .child-brand-juniors,
+      .child-design-project,
+      .child-ai-music {
+        left: 73px;
+        top: 190px;
+        width: 64px;
+        height: 64px;
+      }
+
+      .child-brand-concept,
+      .child-arch-juniors,
+      .child-ai-video {
+        left: 156px;
+        top: 188px;
+        width: 58px;
+        height: 58px;
+      }
+
+      .child-film-industries {
+        left: 26px;
+        top: 74px;
+        width: 78px;
+        height: 78px;
+      }
+
+      .child-biopics {
+        left: 134px;
+        top: 70px;
+        width: 86px;
+        height: 86px;
+      }
+
+      .child-short-debut {
+        left: 48px;
+        top: 162px;
+        width: 82px;
+        height: 82px;
+      }
+
+      .child-film-festival {
+        left: 148px;
+        top: 166px;
+        width: 68px;
+        height: 68px;
+      }
+
+      .child-client-integration {
+        left: 34px;
+        top: 72px;
+        width: 84px;
+        height: 84px;
+      }
+
+      .child-event-build {
+        left: 140px;
+        top: 78px;
+        width: 76px;
+        height: 76px;
+      }
+
+      .child-creative-event {
+        left: 84px;
+        top: 160px;
+        width: 82px;
+        height: 82px;
+      }
+
+      .main-object.is-zoomed-music .bubble:not(.b-music),
+      .main-object.is-zoomed-digital .bubble:not(.b-digital),
+      .main-object.is-zoomed-ads .bubble:not(.b-ads),
+      .main-object.is-zoomed-animation .bubble:not(.b-animation),
+      .main-object.is-zoomed-digital-small .bubble:not(.b-digital-small),
+      .main-object.is-zoomed-branding .bubble:not(.b-branding),
+      .main-object.is-zoomed-cinema .bubble:not(.b-cinema),
+      .main-object.is-zoomed-ai .bubble:not(.b-ai),
+      .main-object.is-zoomed-architecture .bubble:not(.b-architecture),
+      .main-object.is-zoomed-events .bubble:not(.b-events) {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .main-object.is-zoomed-music .b-music,
+      .main-object.is-zoomed-digital .b-digital,
+      .main-object.is-zoomed-ads .b-ads,
+      .main-object.is-zoomed-animation .b-animation,
+      .main-object.is-zoomed-digital-small .b-digital-small,
+      .main-object.is-zoomed-branding .b-branding,
+      .main-object.is-zoomed-cinema .b-cinema,
+      .main-object.is-zoomed-ai .b-ai,
+      .main-object.is-zoomed-architecture .b-architecture,
+      .main-object.is-zoomed-events .b-events {
+        left: 85px;
+        top: 85px;
+        width: 250px;
+        height: 250px;
+        z-index: 4;
+        background: rgba(255, 255, 255, 0.64);
+        transform: translate3d(0, 0, 0) !important;
+      }
+
+      .main-object.is-zoomed-music .b-music .bubble-label,
+      .main-object.is-zoomed-digital .b-digital .bubble-label,
+      .main-object.is-zoomed-ads .b-ads .bubble-label,
+      .main-object.is-zoomed-animation .b-animation .bubble-label,
+      .main-object.is-zoomed-digital-small .b-digital-small .bubble-label,
+      .main-object.is-zoomed-branding .b-branding .bubble-label,
+      .main-object.is-zoomed-cinema .b-cinema .bubble-label,
+      .main-object.is-zoomed-ai .b-ai .bubble-label,
+      .main-object.is-zoomed-architecture .b-architecture .bubble-label,
+      .main-object.is-zoomed-events .b-events .bubble-label {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 12px;
+      }
+
+      .main-object.is-zoomed-music .b-music .child-bubbles,
+      .main-object.is-zoomed-digital .b-digital .child-bubbles,
+      .main-object.is-zoomed-ads .b-ads .child-bubbles,
+      .main-object.is-zoomed-animation .b-animation .child-bubbles,
+      .main-object.is-zoomed-digital-small .b-digital-small .child-bubbles,
+      .main-object.is-zoomed-branding .b-branding .child-bubbles,
+      .main-object.is-zoomed-cinema .b-cinema .child-bubbles,
+      .main-object.is-zoomed-ai .b-ai .child-bubbles,
+      .main-object.is-zoomed-architecture .b-architecture .child-bubbles,
+      .main-object.is-zoomed-events .b-events .child-bubbles {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .bubble.has-micro-open .child-bubble:not(.is-micro-open) {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .child-bubble.is-micro-open {
+        left: 5px !important;
+        top: 5px !important;
+        width: 240px !important;
+        height: 240px !important;
+        z-index: 6;
+        background: rgba(255, 255, 255, 0.68);
+        font-size: 8px;
+        transform: translate3d(0, 0, 0) !important;
+      }
+
+      .bubble.has-micro-open > .bubble-label {
+        opacity: 0;
+      }
+
+      .child-bubble.is-micro-open .child-title {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        max-width: 86px;
+      }
+
+      .child-bubble.is-micro-open .micro-bubbles {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .micro-bubble {
+        overflow: visible;
+      }
+
+      .micro-title {
+        position: relative;
+        z-index: 2;
+      }
+
+      .nano-bubbles {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 260ms ease;
+      }
+
+      .nano-bubble {
+        position: absolute;
+        display: grid;
+        place-items: center;
+        border: 0.5px solid var(--ink);
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.7);
+        color: var(--ink);
+        font-size: 4.8px;
+        font-weight: 500;
+        line-height: 1;
+        text-align: center;
+        text-transform: uppercase;
+      }
+
+      .child-bubble.has-nano-open .micro-bubble:not(.is-nano-open) {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .micro-bubble.is-nano-open {
+        left: 22px !important;
+        top: 22px !important;
+        width: 196px !important;
+        height: 196px !important;
+        z-index: 8;
+        font-size: 8px;
+        background: rgba(255, 255, 255, 0.72);
+        transform: translate3d(0, 0, 0) !important;
+      }
+
+      .micro-bubble.is-nano-open > .micro-title {
+        opacity: 0;
+      }
+
+      .micro-bubble.is-nano-open .nano-bubbles {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .nav {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 38px;
+        z-index: 9;
+        height: 72px;
+      }
+
+      .nav-button {
+        position: absolute;
+        display: grid;
+        place-items: center;
+        border: 0;
+        padding: 0;
+        background: transparent;
+      }
+
+      .eye {
+        right: 27px;
+        bottom: auto;
+        top: -94px;
+        width: 52px;
+        height: 52px;
+      }
+
+      .burger {
+        left: 27px;
+        bottom: auto;
+        top: -94px;
+        width: 52px;
+        height: 52px;
+      }
+
+      .help-link {
+        position: absolute;
+        left: 41px;
+        top: -132px;
+        display: grid;
+        place-items: center;
+        width: 24px;
+        height: 24px;
+        border: 0.5px solid rgba(39, 39, 39, 0.55);
+        border-radius: 50%;
+        color: var(--ink);
+        font-size: 14px;
+        font-weight: 300;
+        line-height: 1;
+        text-decoration: none;
+      }
+
+      .mic {
+        left: 179px;
+        bottom: 0;
+        width: 72px;
+        height: 72px;
+        overflow: visible;
+      }
+
+      .admin-link {
+        position: absolute;
+        left: 179px;
+        top: 84px;
+        width: 72px;
+        color: #999999;
+        font-size: 12px;
+        font-weight: 300;
+        line-height: 1;
+        text-align: center;
+        text-decoration: underline;
+        text-transform: lowercase;
+      }
+
+      .recording-field {
+        position: absolute;
+        inset: 0;
+        z-index: 8;
+        pointer-events: none;
+      }
+
+      .recording-wave {
+        position: absolute;
+        left: 215px;
+        top: 856px;
+        width: 72px;
+        height: 72px;
+        border: 1px solid rgba(39, 39, 39, 0.2);
+        border-radius: 50%;
+        background: transparent;
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(1);
+        pointer-events: none;
+      }
+
+      .recording-wave {
+        animation: mic-wave 6.2s cubic-bezier(0.08, 0.62, 0.18, 1) 1 forwards;
+      }
+
+      .menu-shade {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        z-index: 7;
+        width: 430px;
+        height: auto;
+        pointer-events: none;
+        transform-origin: 50% 100%;
+      }
+
+      .menu-shade.is-voice-active {
+        animation: menu-voice-response 1.38s ease-in-out infinite;
+      }
+
+      .qr {
+        right: 34px;
+        bottom: 14px;
+        width: 44px;
+        height: 44px;
+        opacity: 0.8;
+      }
+
+      .nav-button img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        position: relative;
+        z-index: 1;
+      }
+
+      .nav-button:focus-visible {
+        outline: 1px solid var(--ink);
+        outline-offset: 4px;
+      }
+
+      .island-title:focus-visible,
+      .profile:focus-visible {
+        outline: 1px solid var(--ink);
+        outline-offset: 3px;
+      }
+
+      @keyframes object-breath {
+        0%,
+        100% {
+          transform: translate(0, 0);
+        }
+
+        50% {
+          transform: translate(1px, -2px);
+        }
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 0.26;
+          transform: translate(-50%, -50%) scale(0.98);
+        }
+
+        50% {
+          opacity: 0.46;
+          transform: translate(-50%, -50%) scale(1.02);
+        }
+      }
+
+      @keyframes object-tap {
+        0% {
+          transform: translate(0, 0) scale(1);
+          border-color: rgba(39, 39, 39, 0.86);
+        }
+
+        35% {
+          transform: translate(-2px, 1px) scale(1.012);
+          border-color: rgba(39, 39, 39, 0.42);
+        }
+
+        70% {
+          transform: translate(2px, -1px) scale(0.996);
+          border-color: rgba(39, 39, 39, 0.7);
+        }
+
+        100% {
+          transform: translate(0, 0) scale(1);
+          border-color: var(--ink);
+        }
+      }
+
+      @keyframes object-voice {
+        0%,
+        100% {
+          transform: translate(0, 0) scale(1);
+        }
+
+        25% {
+          transform: translate(1.5px, -1px) scale(1.004);
+        }
+
+        50% {
+          transform: translate(-1px, 1.5px) scale(0.998);
+        }
+
+        75% {
+          transform: translate(1px, 1px) scale(1.003);
+        }
+      }
+
+      @keyframes menu-voice-response {
+        0%,
+        100% {
+          opacity: 1;
+          transform: translate3d(0, 0, 0) scaleY(1);
+        }
+
+        28% {
+          opacity: 0.92;
+          transform: translate3d(0, -1px, 0) scaleY(1.018);
+        }
+
+        58% {
+          opacity: 0.98;
+          transform: translate3d(0, 1px, 0) scaleY(0.992);
+        }
+      }
+
+      @keyframes pulse-tap {
+        0% {
+          opacity: 0.12;
+          transform: translate(-50%, -50%) scale(0.94);
+        }
+
+        100% {
+          opacity: 0.52;
+          transform: translate(-50%, -50%) scale(1.08);
+        }
+      }
+
+      @keyframes mic-wave {
+        0% {
+          opacity: 0.38;
+          transform: translate(-50%, -50%) scale(0.94);
+        }
+
+        68% {
+          opacity: 0.18;
+        }
+
+        100% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(25.2);
+        }
+      }
+
+      .bubble-response-wave {
+        position: absolute;
+        z-index: 7;
+        width: 44px;
+        height: 44px;
+        border: 1px solid rgba(39, 39, 39, 0.28);
+        border-radius: 50%;
+        background: rgba(39, 39, 39, 0.045);
+        opacity: 0;
+        pointer-events: none;
+        transform: translate(-50%, -50%) scale(0.6);
+        animation: bubble-response 1.25s ease-out forwards;
+      }
+
+      @keyframes bubble-response {
+        0% {
+          opacity: 0.5;
+          transform: translate(-50%, -50%) scale(0.6);
+        }
+
+        100% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(4.2);
+        }
+      }
+
+      @media (min-width: 860px) and (min-height: 932px) {
+        .phone {
+          border-radius: 42px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="phone" aria-label="Главный экран G8 объект">
+      <div class="screen">
+        <div class="recording-field" aria-hidden="true"></div>
+        <img class="menu-shade" src="../assets/menu-rectangle-screen-7.svg" alt="" aria-hidden="true" />
+
+        <a class="island-title" href="../screen-6/index.html" aria-label="Открыть главный экран">G8 ОБЪЕКТ</a>
+
+        <section class="object-stage" aria-label="Интерактивный G8 объект">
+          <div class="pulse" aria-hidden="true"></div>
+          <div class="pulse" aria-hidden="true"></div>
+          <div class="pulse" aria-hidden="true"></div>
+          <div class="pulse" aria-hidden="true"></div>
+
+          <div class="main-object">
+            <button class="bubble b-events" type="button" aria-label="Открыть раздел ивенты">
+              <span class="bubble-label">ивенты</span>
+              <span class="child-bubbles" aria-hidden="true">
+                <span class="child-bubble child-client-integration">креативная<br />клиентская<br />интеграция</span>
+                <span class="child-bubble child-event-build">креативная<br />застройка</span>
+                <span class="child-bubble child-creative-event">креативный<br />ивент</span>
+              </span>
+            </button>
+            <button class="bubble b-branding" type="button" aria-label="Открыть раздел брендинг">
+              <span class="bubble-label">брендинг</span>
+              <span class="child-bubbles" aria-hidden="true">
+                <span class="child-bubble child-brand-rules">брендинг<br />по правилам</span>
+                <span class="child-bubble child-brand-reform">реформаторский<br />брендинг</span>
+                <span class="child-bubble child-pack-rules">упаковка<br />по правилам</span>
+                <span class="child-bubble child-pack-reform">реформаторская<br />упаковка</span>
+                <span class="child-bubble child-brand-juniors">юниоры<br />брендинга</span>
+                <span class="child-bubble child-brand-concept">концепция<br />в брендинге</span>
+              </span>
+            </button>
+            <button class="bubble b-ads" type="button" aria-label="Открыть раздел реклама">
+              <span class="bubble-label">реклама</span>
+              <span class="child-bubbles" aria-hidden="true">
+                <span class="child-bubble child-integrated">интегрированные<br />кампании</span>
+                <span class="child-bubble child-craft">крафт</span>
+                <span class="child-bubble child-video">видео-<br />ролик</span>
+                <span class="child-bubble child-social">социальные<br />проекты</span>
+                <span class="child-bubble child-print">печатная<br />реклама</span>
+                <span class="child-bubble child-innovation">инновации</span>
+                <span class="child-bubble child-nonstandard">нестандарт</span>
+                <span class="child-bubble child-juniors">юниоры<br />рекламы</span>
+              </span>
+            </button>
+            <button class="bubble b-music" type="button" aria-label="Открыть раздел музыка">
+              <span class="bubble-label">музыка</span>
+              <span class="child-bubbles" aria-hidden="true">
+                <span class="child-bubble child-visual">изобразительная<br />реализация</span>
+                <span class="child-bubble child-concept">лучшая<br />концептуальная<br />работа</span>
+                <span class="child-bubble child-genre">на стыке<br />жанров</span>
+                <span class="child-bubble child-echo">эхо<br />эпох</span>
+                <span class="child-bubble child-sound">новый<br />звук</span>
+              </span>
+            </button>
+            <button class="bubble b-cinema" type="button" aria-label="Открыть раздел кино">
+              <span class="bubble-label">кино</span>
+              <span class="child-bubbles" aria-hidden="true">
+                <span class="child-bubble child-film-industries">кино и<br />креативные<br />индустрии</span>
+                <span class="child-bubble child-biopics">байопики:<br />герои<br />креативных<br />индустрий</span>
+                <span class="child-bubble child-short-debut">лучший игровой<br />короткометражный<br />дебют</span>
+                <span class="child-bubble child-film-festival">лучший<br />кинофестиваль</span>
+              </span>
+            </button>
+            <button class="bubble b-ai" type="button" aria-label="Открыть раздел искусственный интеллект">
+              <span class="bubble-label">ии</span>
+              <span class="child-bubbles" aria-hidden="true">
+                <span class="child-bubble child-agents">агенты</span>
+                <span class="child-bubble child-creator-tools">инструменты<br />для креаторов</span>
+                <span class="child-bubble child-ai-juniors">юниоры<br />искусственного<br />интеллекта</span>
+                <span class="child-bubble child-ai-experience">ии-опыт</span>
+                <span class="child-bubble child-ai-music">ии в музыке<br />и звуке</span>
+                <span class="child-bubble child-ai-video">ии-видео</span>
+              </span>
+            </button>
+            <button class="bubble b-animation" type="button" aria-label="Открыть раздел анимация">
+              <span class="bubble-label">анимация</span>
+              <span class="child-bubbles" aria-hidden="true">
+                <span class="child-bubble child-animation-craft">мастерство<br />в анимации</span>
+                <span class="child-bubble child-series">сериалы и<br />полнометражные<br />фильмы</span>
+                <span class="child-bubble child-ad-animation">анимация<br />в рекламе</span>
+                <span class="child-bubble child-ai-animation">анимация<br />и ии</span>
+                <span class="child-bubble child-sketches">анимационные<br />зарисовки</span>
+                <span class="child-bubble child-animation-juniors">юниоры<br />анимации</span>
+              </span>
+            </button>
+            <button class="bubble b-digital" type="button" aria-label="Открыть раздел цифровые продукты">
+              <span class="bubble-label">цифровые<br />продукты</span>
+              <span class="child-bubbles" aria-hidden="true">
+                <span class="child-bubble child-interface">интерфейс</span>
+                <span class="child-bubble child-breakthrough">прорывное<br />решение</span>
+                <span class="child-bubble child-execution">лучшее<br />исполнение</span>
+                <span class="child-bubble child-function">идеальное<br />выполнение<br />функции</span>
+                <span class="child-bubble child-app">мобильное<br />приложение</span>
+                <span class="child-bubble child-site">сайт</span>
+              </span>
+            </button>
+            <button class="bubble b-architecture" type="button" aria-label="Открыть раздел архитектура">
+              <span class="bubble-label">архитектура</span>
+              <span class="child-bubbles" aria-hidden="true">
+                <span class="child-bubble child-improvement">проект<br />благоустройства</span>
+                <span class="child-bubble child-design-project">дизайн-<br />проект</span>
+                <span class="child-bubble child-expo-design">архитектура<br />и дизайн<br />экспозиций</span>
+                <span class="child-bubble child-territory-branding">брендинг<br />территории /<br />девелоперского<br />проекта</span>
+                <span class="child-bubble child-architectural-project">архитектурный<br />проект</span>
+                <span class="child-bubble child-arch-juniors">юниоры<br />архитектуры</span>
+              </span>
+            </button>
+            <button class="bubble b-digital-small" type="button" aria-label="Открыть раздел диджитал">
+              <span class="bubble-label">диджитал</span>
+              <span class="child-bubbles" aria-hidden="true">
+                <span class="child-bubble child-blogger">классная<br />блогерская<br />интеграция</span>
+                <span class="child-bubble child-activation">креативная<br />активация</span>
+                <span class="child-bubble child-technocreative">техно-<br />креатив</span>
+                <span class="child-bubble child-viral">виралка</span>
+                <span class="child-bubble child-ai-craft">ии-крафт</span>
+                <span class="child-bubble child-social-media">отлетевшие<br />социальные<br />сети</span>
+                <span class="child-bubble child-digital-juniors">юниоры<br />диджитал</span>
+              </span>
+            </button>
+          </div>
+        </section>
+
+        <nav class="nav" aria-label="Основная навигация">
+          <a class="nav-button profile" href="../screen-4/index.html" aria-label="Мое">
+            <img src="../assets/avatar-screen-7.svg" alt="Ваш аватар" />
+          </a>
+          <a class="nav-button eye" href="../screen-7/index.html" aria-label="Переключить на поток">
+            <img src="../assets/eye-line.svg" alt="" />
+          </a>
+          <a class="nav-button burger" href="../screen-8/index.html" aria-label="Открыть секции">
+            <img src="../assets/burger-screen-7.svg" alt="" />
+          </a>
+          <a class="help-link" href="../screen-11/index.html" aria-label="Открыть справку">?</a>
+          <button class="nav-button mic" type="button" aria-label="Создать запись голосом">
+            <img src="../assets/mic.png" alt="" />
+          </button>
+          <a class="admin-link" href="../screen-9/index.html">админ</a>
+          <a class="nav-button qr" href="../screen-10/index.html" aria-label="Открыть QR сканер">
+            <img src="../assets/qr.png" alt="" />
+          </a>
+        </nav>
+      </div>
+    </main>
+
+    <script>
+      let zoomMode = null;
+      let activeMicroParent = null;
+      let activeNanoParent = null;
+      let voiceActive = false;
+      const canvasState = {
+        scale: 1,
+        x: 0,
+        y: 0,
+        pinchDistance: 0,
+        startScale: 1,
+      };
+
+      function setAppScale() {
+        const viewport = window.visualViewport || window;
+        const scale = Math.min(1, viewport.width / 430, viewport.height / 932);
+        document.documentElement.style.setProperty("--app-scale", scale.toString());
+      }
+
+      function setCanvasTransform(scale, x = canvasState.x, y = canvasState.y) {
+        canvasState.scale = Math.min(2.6, Math.max(1, scale));
+        canvasState.x = x;
+        canvasState.y = y;
+
+        if (canvasState.scale === 1) {
+          canvasState.x = 0;
+          canvasState.y = 0;
+        }
+
+        document.documentElement.style.setProperty("--canvas-scale", canvasState.scale.toString());
+        document.documentElement.style.setProperty("--canvas-x", `${canvasState.x}px`);
+        document.documentElement.style.setProperty("--canvas-y", `${canvasState.y}px`);
+      }
+
+      function resetOverview() {
+        zoomMode = null;
+        activeMicroParent = null;
+        activeNanoParent = null;
+        setCanvasTransform(1, 0, 0);
+        document
+          .querySelector(".main-object")
+          ?.classList.remove(
+            "is-zoomed-music",
+            "is-zoomed-digital",
+            "is-zoomed-ads",
+            "is-zoomed-animation",
+            "is-zoomed-digital-small",
+            "is-zoomed-branding",
+            "is-zoomed-cinema",
+            "is-zoomed-ai",
+            "is-zoomed-architecture",
+            "is-zoomed-events",
+          );
+        document.querySelectorAll(".bubble.has-micro-open").forEach((bubble) => {
+          bubble.classList.remove("has-micro-open");
+        });
+        document.querySelectorAll(".child-bubble.is-micro-open").forEach((bubble) => {
+          bubble.classList.remove("is-micro-open");
+        });
+        document.querySelectorAll(".child-bubble.has-nano-open").forEach((bubble) => {
+          bubble.classList.remove("has-nano-open");
+        });
+        document.querySelectorAll(".micro-bubble.is-nano-open").forEach((bubble) => {
+          bubble.classList.remove("is-nano-open");
+        });
+      }
+
+      function zoomToSection(section) {
+        const mainObject = document.querySelector(".main-object");
+        if (!mainObject || zoomMode === section) return;
+
+        resetOverview();
+        zoomMode = section;
+        document.querySelectorAll(".bubble").forEach((bubble) => {
+          bubble.style.transform = "translate3d(0, 0, 0)";
+        });
+        mainObject.classList.add(`is-zoomed-${section}`);
+      }
+
+      function emitBubbleWave(bubble) {
+        const stage = document.querySelector(".object-stage");
+        if (!stage || !bubble) return;
+
+        const stageRect = stage.getBoundingClientRect();
+        const bubbleRect = bubble.getBoundingClientRect();
+        const wave = document.createElement("span");
+        const scale = canvasState.scale || 1;
+        wave.className = "bubble-response-wave";
+        wave.style.left = `${(bubbleRect.left - stageRect.left + bubbleRect.width / 2) / scale}px`;
+        wave.style.top = `${(bubbleRect.top - stageRect.top + bubbleRect.height / 2) / scale}px`;
+        wave.style.width = `${Math.max(44, bubbleRect.width / scale)}px`;
+        wave.style.height = `${Math.max(44, bubbleRect.height / scale)}px`;
+
+        stage.append(wave);
+        window.setTimeout(() => wave.remove(), 1300);
+      }
+
+      function handleSectionClick(event, section) {
+        event.stopPropagation();
+        emitBubbleWave(event.currentTarget);
+
+        if (zoomMode === section && !event.target.closest(".child-bubble")) {
+          resetOverview();
+          return;
+        }
+
+        zoomToSection(section);
+      }
+
+      function closeMicroZoom() {
+        closeNanoZoom();
+        activeMicroParent = null;
+        document.querySelectorAll(".bubble.has-micro-open").forEach((bubble) => {
+          bubble.classList.remove("has-micro-open");
+        });
+        document.querySelectorAll(".child-bubble.is-micro-open").forEach((bubble) => {
+          bubble.classList.remove("is-micro-open");
+        });
+      }
+
+      function openMicroZoom(childBubble) {
+        const parent = childBubble.closest(".bubble");
+        if (!parent) return;
+
+        closeMicroZoom();
+        activeMicroParent = childBubble;
+        parent.classList.add("has-micro-open");
+        childBubble.classList.add("is-micro-open");
+        requestAnimationFrame(() => positionMicroBubbles(childBubble));
+      }
+
+      function closeNanoZoom() {
+        activeNanoParent = null;
+        document.querySelectorAll(".child-bubble.has-nano-open").forEach((bubble) => {
+          bubble.classList.remove("has-nano-open");
+        });
+        document.querySelectorAll(".micro-bubble.is-nano-open").forEach((bubble) => {
+          bubble.classList.remove("is-nano-open");
+        });
+      }
+
+      function openNanoZoom(microBubble) {
+        const parent = microBubble.closest(".child-bubble");
+        if (!parent) return;
+
+        closeNanoZoom();
+        activeNanoParent = microBubble;
+        parent.classList.add("has-nano-open");
+        microBubble.classList.add("is-nano-open");
+        requestAnimationFrame(() => positionNanoBubbles(microBubble));
+      }
+
+      function generateMicroBubbles() {
+        const namePool = [
+          "импульс",
+          "форма",
+          "ритм",
+          "свет",
+          "голос",
+          "метод",
+          "знак",
+          "сцена",
+          "жест",
+          "код",
+          "образ",
+          "слой",
+          "такт",
+          "след",
+          "пульс",
+          "точка",
+          "сдвиг",
+          "поток",
+          "нерв",
+          "узел",
+          "тон",
+          "кадр",
+          "шум",
+          "порог",
+          "искры",
+          "пятно",
+          "маркер",
+          "ответ",
+          "эхо",
+          "линия",
+          "мотив",
+          "канал",
+          "сигнал",
+          "пауза",
+          "зерно",
+          "сфера",
+          "нить",
+          "фрагмент",
+        ];
+        const identityPool = [
+          "преданный идеалист",
+          "альфа",
+          "анима анонимус",
+          "махатма веб",
+          "да, будду",
+          "сан киртан",
+          "махатма",
+          "веб",
+          "идеалист",
+          "наблюдатель",
+          "мария",
+          "анна",
+          "саша",
+          "лев",
+          "юля",
+          "мира",
+          "ио",
+          "алиса",
+          "соня",
+          "ника",
+          "вера",
+          "ира",
+          "оля",
+          "ева",
+          "майя",
+          "тао",
+          "рема",
+          "агни",
+          "сурья",
+          "арья",
+          "майтри",
+          "мантра",
+          "платон",
+          "сократ",
+          "гипатия",
+          "ньютон",
+          "тесла",
+          "кюри",
+          "бор",
+          "планк",
+          "фарадей",
+          "лавуазье",
+          "менделеев",
+          "авогадро",
+          "резерфорд",
+          "паули",
+          "ферми",
+          "галилей",
+          "кеплер",
+          "коперник",
+          "фотон",
+          "нейтрино",
+          "кварк",
+          "ион",
+          "атом",
+          "изотоп",
+          "плазма",
+          "спектр",
+          "орбита",
+          "кристалл",
+          "реактив",
+          "алхимик",
+          "проводник",
+          "созерцатель",
+          "исследователь",
+        ];
+
+        document.querySelectorAll(".child-bubble").forEach((child, index) => {
+          if (child.querySelector(".micro-bubbles")) return;
+
+          const title = child.textContent.trim().replace(/\s+/g, " ");
+          const titleWrap = document.createElement("span");
+          titleWrap.className = "child-title";
+          titleWrap.innerHTML = child.innerHTML;
+          child.replaceChildren(titleWrap);
+
+          const microLayer = document.createElement("span");
+          microLayer.className = "micro-bubbles";
+          const count = 6 + ((title.length + index * 3) % 8);
+
+          for (let i = 0; i < count; i += 1) {
+            const micro = document.createElement("span");
+            micro.className = "micro-bubble";
+            const microTitle = document.createElement("span");
+            microTitle.className = "micro-title";
+            microTitle.textContent = namePool[(title.length + index * 2 + i * 5) % namePool.length];
+            micro.append(microTitle);
+
+            const nanoLayer = document.createElement("span");
+            nanoLayer.className = "nano-bubbles";
+            const nanoCount = 5 + ((title.length + index * 2 + i * 3) % 6);
+            for (let nanoIndex = 0; nanoIndex < nanoCount; nanoIndex += 1) {
+              const nano = document.createElement("span");
+              nano.className = "nano-bubble";
+              nano.textContent =
+                identityPool[(title.length + index * 3 + i * 5 + nanoIndex * 2) % identityPool.length];
+              nanoLayer.append(nano);
+            }
+
+            micro.append(nanoLayer);
+            microLayer.append(micro);
+          }
+
+          child.append(microLayer);
+        });
+      }
+
+      function positionMicroBubbles(parent) {
+        const parentSize = parent.offsetWidth || 220;
+        const center = parentSize / 2;
+        const items = [...parent.querySelectorAll(".micro-bubble")];
+
+        items.forEach((node, index) => {
+          const size = Math.min(78, Math.max(56, parentSize * (0.23 + ((index % 4) * 0.025))));
+          const radius = size / 2;
+          const angle = index * 2.34 + items.length * 0.37;
+          const ring = parentSize * (0.24 + ((index % 3) * 0.065));
+          const x = center + Math.cos(angle) * ring - radius;
+          const y = center + Math.sin(angle) * ring - radius;
+
+          node.style.width = `${size}px`;
+          node.style.height = `${size}px`;
+          node.style.left = `${x}px`;
+          node.style.top = `${y}px`;
+          node.style.transform = "translate3d(0, 0, 0)";
+          node.dataset.baseX = x.toString();
+          node.dataset.baseY = y.toString();
+          node.dataset.radius = radius.toString();
+          node.dataset.x = x.toString();
+          node.dataset.y = y.toString();
+        });
+      }
+
+      function positionNanoBubbles(parent) {
+        const parentSize = parent.offsetWidth || 196;
+        const center = parentSize / 2;
+        const items = [...parent.querySelectorAll(".nano-bubble")];
+
+        items.forEach((node, index) => {
+          const size = Math.min(54, Math.max(34, parentSize * (0.18 + ((index % 4) * 0.018))));
+          const radius = size / 2;
+          const angle = index * 2.28 + items.length * 0.49;
+          const ring = parentSize * (0.22 + ((index % 3) * 0.075));
+          const x = center + Math.cos(angle) * ring - radius;
+          const y = center + Math.sin(angle) * ring - radius;
+
+          node.style.width = `${size}px`;
+          node.style.height = `${size}px`;
+          node.style.left = `${x}px`;
+          node.style.top = `${y}px`;
+          node.style.transform = "translate3d(0, 0, 0)";
+          node.dataset.baseX = x.toString();
+          node.dataset.baseY = y.toString();
+          node.dataset.radius = radius.toString();
+          node.dataset.x = x.toString();
+          node.dataset.y = y.toString();
+        });
+      }
+
+      function constrainToCircle(item, center, radius, padding = 6) {
+        const cx = item.x + item.r;
+        const cy = item.y + item.r;
+        const dx = cx - center.x;
+        const dy = cy - center.y;
+        const distance = Math.hypot(dx, dy) || 1;
+        const maxDistance = radius - item.r - padding;
+
+        if (distance <= maxDistance) return;
+
+        const nx = dx / distance;
+        const ny = dy / distance;
+        item.x = center.x + nx * maxDistance - item.r;
+        item.y = center.y + ny * maxDistance - item.r;
+
+        const dot = item.vx * nx + item.vy * ny;
+        if (dot > 0) {
+          item.vx -= 1.9 * dot * nx;
+          item.vy -= 1.9 * dot * ny;
+        }
+      }
+
+      function avoidCenterLabel(item, center, radius) {
+        const cx = item.x + item.r;
+        const cy = item.y + item.r;
+        const dx = cx - center.x;
+        const dy = cy - center.y;
+        const distance = Math.hypot(dx, dy) || 1;
+        const minDistance = radius + item.r;
+
+        if (distance >= minDistance) return;
+
+        const nx = dx / distance;
+        const ny = dy / distance;
+        const push = (minDistance - distance) * 0.72;
+        item.x += nx * push;
+        item.y += ny * push;
+
+        const dot = item.vx * nx + item.vy * ny;
+        if (dot < 0) {
+          item.vx -= 1.6 * dot * nx;
+          item.vy -= 1.6 * dot * ny;
+        }
+      }
+
+      function separateCircles(items, gap, strength, center, radius, padding) {
+        for (let i = 0; i < items.length; i += 1) {
+          for (let j = i + 1; j < items.length; j += 1) {
+            const a = items[i];
+            const b = items[j];
+            const ax = a.x + a.r;
+            const ay = a.y + a.r;
+            const bx = b.x + b.r;
+            const by = b.y + b.r;
+            const dx = bx - ax;
+            const dy = by - ay;
+            const distance = Math.hypot(dx, dy) || 1;
+            const minDistance = a.r + b.r + gap;
+
+            if (distance < minDistance) {
+              const nx = dx / distance;
+              const ny = dy / distance;
+              const push = (minDistance - distance) * strength;
+              a.x -= nx * push;
+              a.y -= ny * push;
+              b.x += nx * push;
+              b.y += ny * push;
+
+              const avn = a.vx * nx + a.vy * ny;
+              const bvn = b.vx * nx + b.vy * ny;
+              const impulse = (avn - bvn) * 0.5;
+              a.vx -= impulse * nx;
+              a.vy -= impulse * ny;
+              b.vx += impulse * nx;
+              b.vy += impulse * ny;
+
+              constrainToCircle(a, center, radius, padding);
+              constrainToCircle(b, center, radius, padding);
+            }
+          }
+        }
+      }
+
+      function startBubbleMotion() {
+        const mainRadius = 210;
+        const mainCenter = { x: 210, y: 210 };
+        const bubbles = [...document.querySelectorAll(".bubble")].map((node, index) => {
+          const size = node.offsetWidth;
+          const baseX = node.offsetLeft;
+          const baseY = node.offsetTop;
+          const angle = index * 1.73;
+
+          return {
+            node,
+            baseX,
+            baseY,
+            x: baseX,
+            y: baseY,
+            vx: Math.cos(angle) * 0.13,
+            vy: Math.sin(angle) * 0.13,
+            r: size / 2,
+            voiceAngle: angle + 0.43,
+            voicePhase: index * 0.71,
+            voicePulse: 0,
+          };
+        });
+
+        function tick() {
+          if (zoomMode) {
+            requestAnimationFrame(tick);
+            return;
+          }
+
+          for (const bubble of bubbles) {
+            const voiceBoost = voiceActive ? 2.8 : 1;
+            if (voiceActive) {
+              bubble.voicePulse += 0.06 + (bubble.r % 7) * 0.002;
+              bubble.vx += Math.cos(bubble.voiceAngle + bubble.voicePulse + bubble.voicePhase) * 0.006;
+              bubble.vy += Math.sin(bubble.voiceAngle * 1.17 + bubble.voicePulse + bubble.voicePhase) * 0.006;
+            }
+            bubble.x += bubble.vx * voiceBoost;
+            bubble.y += bubble.vy * voiceBoost;
+            constrainToCircle(bubble, mainCenter, mainRadius, 7);
+          }
+
+          separateCircles(bubbles, 12, 0.58, mainCenter, mainRadius, 7);
+
+          for (const bubble of bubbles) {
+            constrainToCircle(bubble, mainCenter, mainRadius, 7);
+            bubble.vx *= voiceActive ? 0.992 : 0.997;
+            bubble.vy *= voiceActive ? 0.992 : 0.997;
+
+            const minimumMotion = voiceActive ? 0.22 : 0.09;
+            const randomImpulse = voiceActive ? 0.09 : 0.035;
+
+            if (Math.abs(bubble.vx) + Math.abs(bubble.vy) < minimumMotion) {
+              bubble.vx += (Math.random() - 0.5) * randomImpulse;
+              bubble.vy += (Math.random() - 0.5) * randomImpulse;
+            }
+
+            const dx = bubble.x - bubble.baseX;
+            const dy = bubble.y - bubble.baseY;
+            const voiceJitterX = voiceActive
+              ? Math.cos(bubble.voicePulse * 2.3 + bubble.voicePhase) * (1.4 + bubble.r * 0.01)
+              : 0;
+            const voiceJitterY = voiceActive
+              ? Math.sin(bubble.voicePulse * 1.9 + bubble.voicePhase) * (1.4 + bubble.r * 0.01)
+              : 0;
+            bubble.node.style.transform = `translate3d(${(dx + voiceJitterX).toFixed(2)}px, ${(dy + voiceJitterY).toFixed(2)}px, 0)`;
+          }
+
+          requestAnimationFrame(tick);
+        }
+
+        requestAnimationFrame(tick);
+      }
+
+      function startChildBubbleMotion() {
+        const sectionRadius = 125;
+        const sectionCenter = { x: 125, y: 125 };
+        const children = [...document.querySelectorAll(".bubble .child-bubble")].map((node, index) => {
+          const parent = node.closest(".bubble");
+          const size = node.offsetWidth;
+          const baseX = node.offsetLeft;
+          const baseY = node.offsetTop;
+          const angle = index * 1.91 + 0.7;
+
+          return {
+            node,
+            parent,
+            baseX,
+            baseY,
+            x: baseX,
+            y: baseY,
+            vx: Math.cos(angle) * 0.07,
+            vy: Math.sin(angle) * 0.07,
+            r: size / 2,
+            voiceAngle: angle + 0.29,
+            voicePhase: index * 0.83,
+            voicePulse: 0,
+          };
+        });
+
+        function tick() {
+          const sectionSelector = {
+            music: ".b-music",
+            digital: ".b-digital",
+            ads: ".b-ads",
+            animation: ".b-animation",
+            "digital-small": ".b-digital-small",
+            branding: ".b-branding",
+            cinema: ".b-cinema",
+            ai: ".b-ai",
+            architecture: ".b-architecture",
+            events: ".b-events",
+          }[zoomMode];
+          const activeParent = sectionSelector ? document.querySelector(sectionSelector) : null;
+          const activeChildren = activeParent
+            ? children.filter((child) => child.parent === activeParent)
+            : [];
+
+          if (activeChildren.length) {
+            for (const child of activeChildren) {
+              const voiceBoost = voiceActive ? 3.2 : 1;
+              if (voiceActive) {
+                child.voicePulse += 0.075 + (child.r % 5) * 0.002;
+                child.vx += Math.cos(child.voiceAngle + child.voicePulse + child.voicePhase) * 0.0048;
+                child.vy += Math.sin(child.voiceAngle * 1.21 + child.voicePulse + child.voicePhase) * 0.0048;
+              }
+              child.x += child.vx * voiceBoost;
+              child.y += child.vy * voiceBoost;
+              constrainToCircle(child, sectionCenter, sectionRadius, 9);
+              avoidCenterLabel(child, sectionCenter, 36);
+              constrainToCircle(child, sectionCenter, sectionRadius, 9);
+            }
+
+            separateCircles(activeChildren, 8, 0.54, sectionCenter, sectionRadius, 9);
+
+            for (const child of activeChildren) {
+              constrainToCircle(child, sectionCenter, sectionRadius, 9);
+              avoidCenterLabel(child, sectionCenter, 36);
+              constrainToCircle(child, sectionCenter, sectionRadius, 9);
+              child.vx *= voiceActive ? 0.992 : 0.998;
+              child.vy *= voiceActive ? 0.992 : 0.998;
+
+              const minimumMotion = voiceActive ? 0.18 : 0.045;
+              const randomImpulse = voiceActive ? 0.07 : 0.024;
+
+              if (Math.abs(child.vx) + Math.abs(child.vy) < minimumMotion) {
+                child.vx += (Math.random() - 0.5) * randomImpulse;
+                child.vy += (Math.random() - 0.5) * randomImpulse;
+              }
+
+              const dx = child.x - child.baseX;
+              const dy = child.y - child.baseY;
+              const voiceJitterX = voiceActive
+                ? Math.cos(child.voicePulse * 2.1 + child.voicePhase) * (1.2 + child.r * 0.012)
+                : 0;
+              const voiceJitterY = voiceActive
+                ? Math.sin(child.voicePulse * 1.7 + child.voicePhase) * (1.2 + child.r * 0.012)
+                : 0;
+              child.node.style.transform = `translate3d(${(dx + voiceJitterX).toFixed(2)}px, ${(dy + voiceJitterY).toFixed(2)}px, 0)`;
+            }
+          }
+
+          requestAnimationFrame(tick);
+        }
+
+        requestAnimationFrame(tick);
+      }
+
+      function startMicroBubbleMotion() {
+        const microItems = [...document.querySelectorAll(".micro-bubble")].map((node, index) => {
+          const parent = node.closest(".child-bubble");
+          const angle = index * 2.17;
+
+          return {
+            node,
+            parent,
+            baseX: Number(node.dataset.baseX || node.offsetLeft),
+            baseY: Number(node.dataset.baseY || node.offsetTop),
+            x: Number(node.dataset.x || node.offsetLeft),
+            y: Number(node.dataset.y || node.offsetTop),
+            vx: Math.cos(angle + 0.8) * 0.045,
+            vy: Math.sin(angle + 0.8) * 0.045,
+            r: Number(node.dataset.radius || node.offsetWidth / 2),
+            voiceAngle: angle + 0.61,
+            voicePhase: index * 0.97,
+            voicePulse: 0,
+          };
+        });
+
+        function tick() {
+          const activeItems = activeMicroParent
+            ? microItems.filter((item) => item.parent === activeMicroParent)
+            : [];
+          const parentSize = activeMicroParent?.offsetWidth || 200;
+          const microCenter = { x: parentSize / 2, y: parentSize / 2 };
+          const microRadius = parentSize / 2;
+
+          if (activeItems.length) {
+            for (const item of activeItems) {
+              item.baseX = Number(item.node.dataset.baseX || item.baseX);
+              item.baseY = Number(item.node.dataset.baseY || item.baseY);
+              item.x = Number(item.node.dataset.x || item.x);
+              item.y = Number(item.node.dataset.y || item.y);
+              item.r = Number(item.node.dataset.radius || item.r);
+              const voiceBoost = voiceActive ? 3.4 : 1;
+              if (voiceActive) {
+                item.voicePulse += 0.085 + (item.r % 4) * 0.002;
+                item.vx += Math.cos(item.voiceAngle + item.voicePulse + item.voicePhase) * 0.0038;
+                item.vy += Math.sin(item.voiceAngle * 1.31 + item.voicePulse + item.voicePhase) * 0.0038;
+              }
+              item.x += item.vx * voiceBoost;
+              item.y += item.vy * voiceBoost;
+              constrainToCircle(item, microCenter, microRadius, 6);
+              avoidCenterLabel(item, microCenter, 28);
+              constrainToCircle(item, microCenter, microRadius, 6);
+            }
+
+            separateCircles(activeItems, 5, 0.5, microCenter, microRadius, 6);
+
+            for (const item of activeItems) {
+              constrainToCircle(item, microCenter, microRadius, 6);
+              avoidCenterLabel(item, microCenter, 28);
+              constrainToCircle(item, microCenter, microRadius, 6);
+              item.vx *= voiceActive ? 0.992 : 0.998;
+              item.vy *= voiceActive ? 0.992 : 0.998;
+
+              const minimumMotion = voiceActive ? 0.13 : 0.028;
+              const randomImpulse = voiceActive ? 0.055 : 0.018;
+
+              if (Math.abs(item.vx) + Math.abs(item.vy) < minimumMotion) {
+                item.vx += (Math.random() - 0.5) * randomImpulse;
+                item.vy += (Math.random() - 0.5) * randomImpulse;
+              }
+
+              const dx = item.x - item.baseX;
+              const dy = item.y - item.baseY;
+              const voiceJitterX = voiceActive
+                ? Math.cos(item.voicePulse * 2.4 + item.voicePhase) * (1 + item.r * 0.013)
+                : 0;
+              const voiceJitterY = voiceActive
+                ? Math.sin(item.voicePulse * 1.8 + item.voicePhase) * (1 + item.r * 0.013)
+                : 0;
+              item.node.style.transform = `translate3d(${(dx + voiceJitterX).toFixed(2)}px, ${(dy + voiceJitterY).toFixed(2)}px, 0)`;
+              item.node.dataset.x = item.x.toString();
+              item.node.dataset.y = item.y.toString();
+            }
+          }
+
+          requestAnimationFrame(tick);
+        }
+
+        requestAnimationFrame(tick);
+      }
+
+      function startNanoBubbleMotion() {
+        const nanoItems = [...document.querySelectorAll(".nano-bubble")].map((node, index) => {
+          const parent = node.closest(".micro-bubble");
+          const angle = index * 2.41 + 0.4;
+
+          return {
+            node,
+            parent,
+            baseX: Number(node.dataset.baseX || node.offsetLeft),
+            baseY: Number(node.dataset.baseY || node.offsetTop),
+            x: Number(node.dataset.x || node.offsetLeft),
+            y: Number(node.dataset.y || node.offsetTop),
+            vx: Math.cos(angle) * 0.035,
+            vy: Math.sin(angle) * 0.035,
+            r: Number(node.dataset.radius || node.offsetWidth / 2),
+            voiceAngle: angle + 0.53,
+            voicePhase: index * 1.13,
+            voicePulse: 0,
+          };
+        });
+
+        function tick() {
+          const activeItems = activeNanoParent
+            ? nanoItems.filter((item) => item.parent === activeNanoParent)
+            : [];
+          const parentSize = activeNanoParent?.offsetWidth || 196;
+          const nanoCenter = { x: parentSize / 2, y: parentSize / 2 };
+          const nanoRadius = parentSize / 2;
+
+          if (activeItems.length) {
+            for (const item of activeItems) {
+              item.baseX = Number(item.node.dataset.baseX || item.baseX);
+              item.baseY = Number(item.node.dataset.baseY || item.baseY);
+              item.x = Number(item.node.dataset.x || item.x);
+              item.y = Number(item.node.dataset.y || item.y);
+              item.r = Number(item.node.dataset.radius || item.r);
+
+              const voiceBoost = voiceActive ? 3.8 : 1;
+              if (voiceActive) {
+                item.voicePulse += 0.095 + (item.r % 3) * 0.002;
+                item.vx += Math.cos(item.voiceAngle + item.voicePulse + item.voicePhase) * 0.0036;
+                item.vy += Math.sin(item.voiceAngle * 1.37 + item.voicePulse + item.voicePhase) * 0.0036;
+              }
+
+              item.x += item.vx * voiceBoost;
+              item.y += item.vy * voiceBoost;
+              constrainToCircle(item, nanoCenter, nanoRadius, 5);
+              avoidCenterLabel(item, nanoCenter, 27);
+              constrainToCircle(item, nanoCenter, nanoRadius, 5);
+            }
+
+            separateCircles(activeItems, 4, 0.52, nanoCenter, nanoRadius, 5);
+
+            for (const item of activeItems) {
+              constrainToCircle(item, nanoCenter, nanoRadius, 5);
+              avoidCenterLabel(item, nanoCenter, 27);
+              constrainToCircle(item, nanoCenter, nanoRadius, 5);
+              item.vx *= voiceActive ? 0.992 : 0.998;
+              item.vy *= voiceActive ? 0.992 : 0.998;
+
+              const minimumMotion = voiceActive ? 0.11 : 0.024;
+              const randomImpulse = voiceActive ? 0.05 : 0.016;
+
+              if (Math.abs(item.vx) + Math.abs(item.vy) < minimumMotion) {
+                item.vx += (Math.random() - 0.5) * randomImpulse;
+                item.vy += (Math.random() - 0.5) * randomImpulse;
+              }
+
+              const dx = item.x - item.baseX;
+              const dy = item.y - item.baseY;
+              const voiceJitterX = voiceActive
+                ? Math.cos(item.voicePulse * 2.7 + item.voicePhase) * (0.8 + item.r * 0.012)
+                : 0;
+              const voiceJitterY = voiceActive
+                ? Math.sin(item.voicePulse * 1.95 + item.voicePhase) * (0.8 + item.r * 0.012)
+                : 0;
+              item.node.style.transform = `translate3d(${(dx + voiceJitterX).toFixed(2)}px, ${(dy + voiceJitterY).toFixed(2)}px, 0)`;
+              item.node.dataset.x = item.x.toString();
+              item.node.dataset.y = item.y.toString();
+            }
+          }
+
+          requestAnimationFrame(tick);
+        }
+
+        requestAnimationFrame(tick);
+      }
+
+      function startCanvasZoom() {
+        const stage = document.querySelector(".object-stage");
+        if (!stage) return;
+
+        stage.addEventListener(
+          "wheel",
+          (event) => {
+            event.preventDefault();
+            const nextScale = canvasState.scale + (event.deltaY < 0 ? 0.12 : -0.12);
+            setCanvasTransform(nextScale);
+          },
+          { passive: false },
+        );
+
+        stage.addEventListener(
+          "touchstart",
+          (event) => {
+            if (event.touches.length !== 2) return;
+
+            const [first, second] = event.touches;
+            canvasState.pinchDistance = Math.hypot(first.clientX - second.clientX, first.clientY - second.clientY);
+            canvasState.startScale = canvasState.scale;
+          },
+          { passive: false },
+        );
+
+        stage.addEventListener(
+          "touchmove",
+          (event) => {
+            if (event.touches.length !== 2 || !canvasState.pinchDistance) return;
+
+            event.preventDefault();
+            const [first, second] = event.touches;
+            const distance = Math.hypot(first.clientX - second.clientX, first.clientY - second.clientY);
+            const nextScale = canvasState.startScale * (distance / canvasState.pinchDistance);
+            setCanvasTransform(nextScale);
+          },
+          { passive: false },
+        );
+
+        stage.addEventListener("touchend", (event) => {
+          if (event.touches.length < 2) {
+            canvasState.pinchDistance = 0;
+          }
+        });
+      }
+
+      function startMicHoldFeedback() {
+        const mic = document.querySelector(".mic");
+        const recordingField = document.querySelector(".recording-field");
+        const mainObject = document.querySelector(".main-object");
+        const menuShade = document.querySelector(".menu-shade");
+        if (!mic || !recordingField || !mainObject || !menuShade) return;
+        let waveInterval = 0;
+        let isRecording = false;
+
+        function setVoiceClass(isActive) {
+          const method = isActive ? "add" : "remove";
+          mainObject.classList[method]("is-voice-active");
+          menuShade.classList[method]("is-voice-active");
+        }
+
+        function emitVoiceWave() {
+          const wave = document.createElement("span");
+          wave.className = "recording-wave";
+          recordingField.append(wave);
+          window.setTimeout(() => wave.remove(), 6400);
+        }
+
+        function startRecordingVisual(event) {
+          event?.preventDefault();
+          if (isRecording) return;
+
+          isRecording = true;
+          voiceActive = true;
+          setVoiceClass(true);
+          emitVoiceWave();
+          waveInterval = window.setInterval(emitVoiceWave, 460);
+        }
+
+        function stopRecordingVisual() {
+          isRecording = false;
+          voiceActive = false;
+          setVoiceClass(false);
+          window.clearInterval(waveInterval);
+        }
+
+        mic.addEventListener("pointerdown", startRecordingVisual);
+        mic.addEventListener("pointerup", stopRecordingVisual);
+        mic.addEventListener("pointercancel", stopRecordingVisual);
+        mic.addEventListener("pointerleave", stopRecordingVisual);
+        mic.addEventListener("click", (event) => {
+          event.preventDefault();
+        });
+      }
+
+      function pulseMainObject() {
+        const mainObject = document.querySelector(".main-object");
+        const stage = document.querySelector(".object-stage");
+        if (!mainObject || !stage) return;
+
+        mainObject.classList.remove("is-tapped");
+        stage.classList.remove("is-tapped");
+        void mainObject.offsetWidth;
+        mainObject.classList.add("is-tapped");
+        stage.classList.add("is-tapped");
+
+        window.setTimeout(() => {
+          mainObject.classList.remove("is-tapped");
+          stage.classList.remove("is-tapped");
+        }, 540);
+      }
+
+      setAppScale();
+      generateMicroBubbles();
+      startBubbleMotion();
+      startChildBubbleMotion();
+      startMicroBubbleMotion();
+      startNanoBubbleMotion();
+      startCanvasZoom();
+      startMicHoldFeedback();
+      window.addEventListener("resize", setAppScale);
+      window.visualViewport?.addEventListener("resize", setAppScale);
+      document.querySelector(".b-music")?.addEventListener("click", (event) => handleSectionClick(event, "music"));
+      document.querySelector(".b-digital")?.addEventListener("click", (event) => handleSectionClick(event, "digital"));
+      document.querySelector(".b-ads")?.addEventListener("click", (event) => handleSectionClick(event, "ads"));
+      document.querySelector(".b-animation")?.addEventListener("click", (event) => handleSectionClick(event, "animation"));
+      document
+        .querySelector(".b-digital-small")
+        ?.addEventListener("click", (event) => handleSectionClick(event, "digital-small"));
+      document.querySelector(".b-branding")?.addEventListener("click", (event) => handleSectionClick(event, "branding"));
+      document.querySelector(".b-cinema")?.addEventListener("click", (event) => handleSectionClick(event, "cinema"));
+      document.querySelector(".b-ai")?.addEventListener("click", (event) => handleSectionClick(event, "ai"));
+      document
+        .querySelector(".b-architecture")
+        ?.addEventListener("click", (event) => handleSectionClick(event, "architecture"));
+      document.querySelector(".b-events")?.addEventListener("click", (event) => handleSectionClick(event, "events"));
+      document.querySelectorAll(".child-bubble").forEach((child) => {
+        child.addEventListener("click", (event) => {
+          if (!zoomMode) return;
+          event.stopPropagation();
+          openMicroZoom(child);
+        });
+      });
+      document.querySelectorAll(".micro-bubble").forEach((micro) => {
+        micro.addEventListener("click", (event) => {
+          if (!activeMicroParent) return;
+          event.stopPropagation();
+          openNanoZoom(micro);
+        });
+      });
+      document.querySelector(".main-object")?.addEventListener("click", (event) => {
+        if (activeNanoParent && !event.target.closest(".micro-bubble.is-nano-open")) {
+          closeNanoZoom();
+          return;
+        }
+
+        if (activeMicroParent && !event.target.closest(".child-bubble.is-micro-open")) {
+          closeMicroZoom();
+          return;
+        }
+
+        if (zoomMode && event.target.classList.contains("main-object")) {
+          resetOverview();
+          return;
+        }
+
+        if (!zoomMode && event.target.classList.contains("main-object")) {
+          pulseMainObject();
+        }
+      });
+    </script>
+  </body>
+</html>

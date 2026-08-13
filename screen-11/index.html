@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>G8 ОБЪЕКТ - справка</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@100;300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --frame-width: 430px;
+        --frame-height: 932px;
+        --font-family: "IBM Plex Mono", monospace;
+        --ink: #272727;
+        --muted: #999999;
+        --paper: #ffffff;
+        --line: rgba(39, 39, 39, 0.45);
+        --app-scale: 1;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+        background: #111111;
+        color: var(--ink);
+        font-family: var(--font-family);
+      }
+
+      body {
+        display: flex;
+        align-items: flex-start;
+        justify-content: flex-start;
+      }
+
+      .phone {
+        position: relative;
+        width: var(--frame-width);
+        height: var(--frame-height);
+        overflow: hidden;
+        background: var(--paper);
+        transform: scale(var(--app-scale));
+        transform-origin: top center;
+      }
+
+      .phone::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 121px;
+        z-index: 12;
+        width: 188px;
+        height: 106px;
+        border-radius: 0 0 24px 24px;
+        background: #111111;
+      }
+
+      .screen {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        background: var(--paper);
+      }
+
+      .island-title {
+        position: absolute;
+        top: 57px;
+        left: 121px;
+        z-index: 13;
+        display: grid;
+        place-items: center;
+        width: 188px;
+        height: 36px;
+        color: #ffffff;
+        font-size: 24px;
+        font-weight: 600;
+        line-height: 1;
+        text-decoration: none;
+        text-transform: uppercase;
+      }
+
+      .help-scroll {
+        position: absolute;
+        inset: 0;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding: 184px 25px 90px;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .help-scroll::-webkit-scrollbar {
+        display: none;
+      }
+
+      .title {
+        margin: 0 0 10px;
+        font-size: 42px;
+        font-weight: 600;
+        line-height: 0.92;
+        text-transform: uppercase;
+      }
+
+      .intro {
+        margin: 0 0 30px;
+        max-width: 330px;
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 300;
+        line-height: 1.18;
+      }
+
+      .manifest {
+        margin: 0 0 28px;
+        padding: 18px 0 20px;
+        border-top: 0.5px solid var(--line);
+        border-bottom: 0.5px solid var(--line);
+      }
+
+      .manifest-title {
+        margin: 0 0 9px;
+        max-width: 360px;
+        font-size: 24px;
+        font-weight: 600;
+        line-height: 0.98;
+        text-transform: uppercase;
+      }
+
+      .manifest-subtitle {
+        margin: 0 0 18px;
+        color: #5f5f5f;
+        font-size: 12px;
+        font-weight: 300;
+        line-height: 1.18;
+      }
+
+      .manifest-note {
+        margin: 0;
+        max-width: 350px;
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 300;
+        line-height: 1.22;
+      }
+
+      .help-card {
+        display: grid;
+        grid-template-columns: 52px 1fr;
+        gap: 15px;
+        padding: 18px 0 20px;
+        border-top: 0.5px solid var(--line);
+      }
+
+      .help-card:last-child {
+        border-bottom: 0.5px solid var(--line);
+      }
+
+      .figure {
+        position: relative;
+        width: 52px;
+        height: 52px;
+      }
+
+      .figure.bubbles::before,
+      .figure.bubbles::after {
+        content: "";
+        position: absolute;
+        border: 0.5px solid var(--ink);
+        border-radius: 50%;
+      }
+
+      .figure.bubbles::before {
+        left: 1px;
+        top: 7px;
+        width: 40px;
+        height: 40px;
+      }
+
+      .figure.bubbles::after {
+        right: 0;
+        top: 0;
+        width: 22px;
+        height: 22px;
+        background: var(--paper);
+      }
+
+      .figure.columns {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 5px;
+        align-items: stretch;
+      }
+
+      .figure.columns span {
+        border: 0.5px solid var(--ink);
+      }
+
+      .figure.map::before {
+        content: "";
+        position: absolute;
+        left: 24px;
+        top: 25px;
+        width: 1px;
+        height: 24px;
+        background: var(--ink);
+      }
+
+      .figure.map::after {
+        content: "";
+        position: absolute;
+        left: 12px;
+        top: 0;
+        width: 25px;
+        height: 25px;
+        border: 0.5px solid var(--ink);
+        border-radius: 50%;
+        background: radial-gradient(circle at center, var(--ink) 0 7px, transparent 8px);
+      }
+
+      .figure.admin {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 5px;
+        align-items: end;
+      }
+
+      .figure.admin span {
+        height: var(--h);
+        background: var(--ink);
+      }
+
+      .figure.qr {
+        display: grid;
+        grid-template-columns: repeat(3, 12px);
+        grid-template-rows: repeat(3, 12px);
+        gap: 6px;
+        place-content: center;
+      }
+
+      .figure.qr span {
+        border: 0.5px solid var(--ink);
+      }
+
+      .figure.qr span:nth-child(1),
+      .figure.qr span:nth-child(5),
+      .figure.qr span:nth-child(9) {
+        background: var(--ink);
+      }
+
+      .card-title {
+        margin: 0 0 8px;
+        font-size: 16px;
+        font-weight: 600;
+        line-height: 1;
+        text-transform: uppercase;
+      }
+
+      .card-text {
+        margin: 0;
+        color: #5f5f5f;
+        font-size: 11px;
+        font-weight: 300;
+        line-height: 1.2;
+      }
+
+      .menu-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px 14px;
+        margin-top: 14px;
+      }
+
+      .menu-item {
+        display: grid;
+        grid-template-columns: 28px 1fr;
+        gap: 8px;
+        align-items: center;
+        min-height: 40px;
+      }
+
+      .menu-icon {
+        position: relative;
+        width: 28px;
+        height: 28px;
+      }
+
+      .menu-icon.avatar {
+        border: 0.5px solid var(--ink);
+        border-radius: 50%;
+        background: radial-gradient(circle at center, transparent 0 8px, rgba(39, 39, 39, 0.08) 9px 13px, transparent 14px);
+      }
+
+      .menu-icon.eye::before {
+        content: "";
+        position: absolute;
+        left: 1px;
+        top: 7px;
+        width: 26px;
+        height: 14px;
+        border: 0.5px solid var(--ink);
+        border-radius: 50%;
+      }
+
+      .menu-icon.eye::after {
+        content: "";
+        position: absolute;
+        left: 10px;
+        top: 10px;
+        width: 8px;
+        height: 8px;
+        border: 0.5px solid var(--ink);
+        border-radius: 50%;
+      }
+
+      .menu-icon.burger::before {
+        content: "";
+        position: absolute;
+        left: 3px;
+        top: 7px;
+        width: 22px;
+        height: 1px;
+        background: var(--ink);
+        box-shadow: 0 7px 0 var(--ink), 0 14px 0 var(--ink);
+      }
+
+      .menu-icon.mic {
+        border: 0.5px solid var(--ink);
+        border-radius: 50%;
+      }
+
+      .menu-icon.mic::before {
+        content: "";
+        position: absolute;
+        left: 10px;
+        top: 5px;
+        width: 8px;
+        height: 13px;
+        border: 0.5px solid var(--ink);
+        border-radius: 8px;
+      }
+
+      .menu-icon.mic::after {
+        content: "";
+        position: absolute;
+        left: 8px;
+        top: 15px;
+        width: 12px;
+        height: 8px;
+        border-bottom: 0.5px solid var(--ink);
+        border-radius: 0 0 12px 12px;
+      }
+
+      .menu-icon.qr {
+        border: 0;
+      }
+
+      .menu-icon.qr::before,
+      .menu-icon.qr::after {
+        content: "";
+        position: absolute;
+        inset: 3px;
+        border: 0.5px solid var(--ink);
+      }
+
+      .menu-icon.qr::after {
+        inset: 10px;
+        background: var(--ink);
+      }
+
+      .menu-icon.admin {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 3px;
+        align-items: end;
+      }
+
+      .menu-icon.admin span {
+        height: var(--h);
+        background: var(--ink);
+      }
+
+      .menu-icon.help {
+        display: grid;
+        place-items: center;
+        border: 0.5px solid var(--ink);
+        border-radius: 50%;
+        font-size: 14px;
+        font-weight: 300;
+      }
+
+      .menu-label {
+        margin: 0 0 3px;
+        font-size: 10px;
+        font-weight: 600;
+        line-height: 1;
+        text-transform: uppercase;
+      }
+
+      .menu-text {
+        margin: 0;
+        color: #5f5f5f;
+        font-size: 8px;
+        font-weight: 300;
+        line-height: 1.12;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="phone" aria-label="Справка MVP">
+      <div class="screen">
+        <a class="island-title" href="../screen-6/index.html" aria-label="Открыть главный экран">G8 ОБЪЕКТ</a>
+
+        <section class="help-scroll">
+          <h1 class="title">КАК ЭТО<br />РАБОТАЕТ</h1>
+          <p class="intro">короткая карта mvp: что имитируют элементы интерфейса и как читать экраны</p>
+
+          <section class="manifest" aria-label="Главная идея">
+            <h2 class="manifest-title">искусство продолжается в мнении человека</h2>
+            <p class="manifest-subtitle">даже если арт объект - это бизнес конференция :)</p>
+            <p class="manifest-note">люди не оставляют обратную связь потому<br />что не хотят быть массой для корпорации</p>
+          </section>
+
+          <article class="help-card">
+            <div class="figure bubbles" aria-hidden="true"></div>
+            <div><h2 class="card-title">пузыри</h2><p class="card-text">главный пузырь - живой объект. Внутри сферы тем, под ними подкатегории и малые мнения. Тап углубляет уровень, свободное поле возвращает назад.</p></div>
+          </article>
+
+          <article class="help-card">
+            <div class="figure columns" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+            <div><h2 class="card-title">колонны</h2><p class="card-text">альтернативный просмотр объекта: поток входящих текстовых и голосовых отзывов. Холст можно двигать и зумить, поток не останавливается.</p></div>
+          </article>
+
+          <article class="help-card">
+            <div class="figure menu-icon help" aria-hidden="true">?</div>
+            <div>
+              <h2 class="card-title">нижнее меню</h2>
+              <p class="card-text">главные действия mvp, каждое ведет в отдельный режим просмотра или ввода.</p>
+              <div class="menu-grid">
+                <div class="menu-item"><span class="menu-icon avatar" aria-hidden="true"></span><div><p class="menu-label">аватар</p><p class="menu-text">персона участника</p></div></div>
+                <div class="menu-item"><span class="menu-icon eye" aria-hidden="true"></span><div><p class="menu-label">глаз</p><p class="menu-text">смена вида объекта</p></div></div>
+                <div class="menu-item"><span class="menu-icon burger" aria-hidden="true"></span><div><p class="menu-label">меню</p><p class="menu-text">секции и карта</p></div></div>
+                <div class="menu-item"><span class="menu-icon mic" aria-hidden="true"></span><div><p class="menu-label">микрофон</p><p class="menu-text">голосовое мнение</p></div></div>
+                <div class="menu-item"><span class="menu-icon qr" aria-hidden="true"></span><div><p class="menu-label">qr</p><p class="menu-text">сканер-заглушка</p></div></div>
+                <div class="menu-item"><span class="menu-icon admin" aria-hidden="true"><span style="--h: 9px"></span><span style="--h: 22px"></span><span style="--h: 15px"></span></span><div><p class="menu-label">админ</p><p class="menu-text">статистика отзывов</p></div></div>
+                <div class="menu-item"><span class="menu-icon help" aria-hidden="true">?</span><div><p class="menu-label">справка</p><p class="menu-text">объяснение mvp</p></div></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="help-card">
+            <div class="figure map" aria-hidden="true"></div>
+            <div><h2 class="card-title">карта секции</h2><p class="card-text">список событий внутри выбранной сферы. Линия растет по мере движения, активная карточка раскрывает спикеров и ввод мнения.</p></div>
+          </article>
+
+          <article class="help-card">
+            <div class="figure admin" aria-hidden="true"><span style="--h: 18px"></span><span style="--h: 42px"></span><span style="--h: 30px"></span></div>
+            <div><h2 class="card-title">админка</h2><p class="card-text">имитация панели обратной связи: оценки сфер, сигналы, графики, проблемы и список людей, оставивших текстовые или голосовые отзывы.</p></div>
+          </article>
+
+          <article class="help-card">
+            <div class="figure qr" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+            <div><h2 class="card-title">qr</h2><p class="card-text">заглушка будущего сканера. Сейчас показывает состояние наведения на код без доступа к камере.</p></div>
+          </article>
+        </section>
+      </div>
+    </main>
+
+    <script>
+      function setAppScale() {
+        const viewport = window.visualViewport || window;
+        const scale = Math.min(1, viewport.width / 430, viewport.height / 932);
+        document.documentElement.style.setProperty("--app-scale", scale.toString());
+      }
+
+      setAppScale();
+      window.addEventListener("resize", setAppScale);
+      window.visualViewport?.addEventListener("resize", setAppScale);
+    </script>
+  </body>
+</html>

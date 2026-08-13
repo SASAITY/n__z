@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>НОВАЯ ЗАПИСЬ — экран 5</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@100;300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --frame-width: 430px;
+        --frame-height: 932px;
+        --grid-margin: 25px;
+        --font-family: "IBM Plex Mono", monospace;
+        --ink: #272727;
+        --muted: #999999;
+        --paper: #ffffff;
+        --content-width: calc(var(--frame-width) - (var(--grid-margin) * 2));
+        --app-scale: 1;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+        background: #111111;
+        color: var(--ink);
+        font-family: var(--font-family);
+        letter-spacing: 0;
+      }
+
+      body {
+        display: flex;
+        align-items: flex-start;
+        justify-content: flex-start;
+      }
+
+      .phone {
+        position: relative;
+        width: var(--frame-width);
+        height: var(--frame-height);
+        margin: 0;
+        overflow: hidden;
+        background: var(--paper);
+        border-radius: 0;
+        transform: scale(var(--app-scale));
+        transform-origin: top center;
+      }
+
+      .phone::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 121px;
+        z-index: 5;
+        width: 188px;
+        height: 35px;
+        border-radius: 0 0 18px 18px;
+        background: #111111;
+      }
+
+      .screen {
+        position: absolute;
+        inset: 0;
+        width: var(--frame-width);
+        height: var(--frame-height);
+        overflow: hidden;
+        background: var(--paper);
+      }
+
+      .brand {
+        position: absolute;
+        top: 53px;
+        left: 50%;
+        width: 178px;
+        height: auto;
+        display: block;
+        transform: translateX(-50%);
+      }
+
+      .status-line {
+        position: absolute;
+        top: 81px;
+        left: 50%;
+        width: 149px;
+        height: 15px;
+        display: block;
+        transform: translateX(-50%);
+      }
+
+      .title {
+        position: absolute;
+        top: 186px;
+        left: var(--grid-margin);
+        width: var(--content-width);
+        margin: 0;
+        color: var(--ink);
+        font-size: 33px;
+        font-weight: 600;
+        line-height: 1.11;
+        text-align: left;
+        text-transform: uppercase;
+      }
+
+      .subtitle {
+        position: absolute;
+        top: 270px;
+        left: var(--grid-margin);
+        width: var(--content-width);
+        margin: 0;
+        color: var(--ink);
+        font-size: 14px;
+        font-weight: 300;
+        line-height: 1.11;
+      }
+
+      .options {
+        position: absolute;
+        top: 318px;
+        left: var(--grid-margin);
+        width: var(--content-width);
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .option {
+        position: relative;
+        width: var(--content-width);
+        height: 50px;
+        padding: 0 58px 0 20px;
+        border: 0.5px solid var(--ink);
+        border-radius: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: var(--font-family);
+        font-size: 14px;
+        font-weight: 300;
+        line-height: 1;
+        text-align: left;
+        cursor: pointer;
+      }
+
+      .option-text {
+        position: relative;
+        top: 1px;
+      }
+
+      .mark {
+        position: absolute;
+        top: 10px;
+        right: 19px;
+        width: 29px;
+        height: 29px;
+        border: 1px solid var(--ink);
+        border-radius: 50%;
+      }
+
+      .mark::before,
+      .mark::after {
+        content: "";
+        position: absolute;
+        left: 7px;
+        top: 13px;
+        width: 15px;
+        height: 1px;
+        background: var(--ink);
+      }
+
+      .mark::after {
+        transform: rotate(90deg);
+      }
+
+      .option.is-selected .mark {
+        background: var(--ink);
+      }
+
+      .option.is-selected .mark::before {
+        left: 8px;
+        top: 15px;
+        width: 7px;
+        background: var(--paper);
+        transform: rotate(45deg);
+      }
+
+      .option.is-selected .mark::after {
+        left: 12px;
+        top: 13px;
+        width: 11px;
+        background: var(--paper);
+        transform: rotate(-45deg);
+      }
+
+      .back {
+        position: absolute;
+        top: 826px;
+        left: 0;
+        width: var(--frame-width);
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 300;
+        line-height: 1;
+        text-align: center;
+        text-decoration: none;
+        text-transform: uppercase;
+      }
+
+      .create-cta {
+        position: absolute;
+        top: 756px;
+        left: var(--grid-margin);
+        width: var(--content-width);
+        height: 48px;
+        display: block;
+      }
+
+      .create-cta img {
+        width: var(--content-width);
+        height: 48px;
+        display: block;
+      }
+
+      .option:focus-visible,
+      .create-cta:focus-visible,
+      .back:focus-visible {
+        outline: 1px solid var(--ink);
+        outline-offset: 3px;
+      }
+
+      @media (min-width: 860px) and (min-height: 932px) {
+        .phone {
+          border-radius: 42px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="phone" aria-label="MVP Новая Запись">
+      <div class="screen" aria-label="Пятый экран">
+        <a href="../screen-6/index.html" aria-label="Открыть главный экран">
+          <img class="brand" src="../assets/g8-title.png" alt="G8 – TO – СЛОЙ" />
+        </a>
+        <img class="status-line" src="../assets/status-line-screen-5.svg" alt="" />
+
+        <h1 class="title">чем вы интересуетесь?</h1>
+        <p class="subtitle">один или несколько вариантов</p>
+
+        <div class="options" aria-label="Интересы">
+          <button class="option" type="button" aria-pressed="false">
+            <span class="option-text">Креатив и стиль</span>
+            <span class="mark" aria-hidden="true"></span>
+          </button>
+          <button class="option" type="button" aria-pressed="false">
+            <span class="option-text">Бизнес и деньги</span>
+            <span class="mark" aria-hidden="true"></span>
+          </button>
+          <button class="option" type="button" aria-pressed="false">
+            <span class="option-text">Личное развитие</span>
+            <span class="mark" aria-hidden="true"></span>
+          </button>
+          <button class="option" type="button" aria-pressed="false">
+            <span class="option-text">Инвестиции</span>
+            <span class="mark" aria-hidden="true"></span>
+          </button>
+          <button class="option" type="button" aria-pressed="false">
+            <span class="option-text">Технологии и AI</span>
+            <span class="mark" aria-hidden="true"></span>
+          </button>
+          <button class="option" type="button" aria-pressed="false">
+            <span class="option-text">Комьюнити</span>
+            <span class="mark" aria-hidden="true"></span>
+          </button>
+          <button class="option" type="button" aria-pressed="false">
+            <span class="option-text">Пришел случайно</span>
+            <span class="mark" aria-hidden="true"></span>
+          </button>
+        </div>
+
+        <a class="create-cta" href="../screen-6/index.html" aria-label="Создать">
+          <img src="../assets/done-button.png" alt="ГОТОВО" />
+        </a>
+
+        <a class="back" href="../screen-4/index.html" aria-label="Назад на четвертый экран">← НАЗАД</a>
+      </div>
+    </main>
+
+    <script>
+      function setAppScale() {
+        const viewport = window.visualViewport || window;
+        const scale = Math.min(1, viewport.width / 430, viewport.height / 932);
+        document.documentElement.style.setProperty("--app-scale", scale.toString());
+      }
+
+      setAppScale();
+      window.addEventListener("resize", setAppScale);
+      window.visualViewport?.addEventListener("resize", setAppScale);
+
+      document.querySelectorAll(".option").forEach((button) => {
+        button.addEventListener("click", () => {
+          const isSelected = button.classList.toggle("is-selected");
+          button.setAttribute("aria-pressed", String(isSelected));
+        });
+      });
+    </script>
+  </body>
+</html>
