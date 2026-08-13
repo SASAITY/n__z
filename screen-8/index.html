@@ -399,7 +399,7 @@
       }
 
       .opinion-input {
-        width: 100%;
+        width: 114.285%;
         height: 70px;
         padding: 8px 9px;
         overflow: hidden;
@@ -408,10 +408,12 @@
         background: transparent;
         color: var(--ink);
         font-family: var(--font-family);
-        font-size: 11px;
+        font-size: 16px;
         font-weight: 300;
         line-height: 1.16;
         resize: none;
+        transform: scale(0.875);
+        transform-origin: left center;
       }
 
       .opinion-input:focus {
@@ -632,6 +634,28 @@
         outline: 1px solid var(--ink);
         outline-offset: 3px;
       }
+
+      img,
+      button,
+      a {
+        -webkit-tap-highlight-color: transparent;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        user-select: none;
+      }
+
+      img {
+        -webkit-user-drag: none;
+        user-drag: none;
+        pointer-events: none;
+      }
+
+      input,
+      textarea,
+      select {
+        -webkit-user-select: text;
+        user-select: text;
+      }
     </style>
   </head>
   <body>
@@ -681,7 +705,7 @@
           </a>
           <a class="help-link" href="../screen-11/index.html" aria-label="Открыть справку">?</a>
           <button class="nav-button mic" type="button" aria-label="Создать запись голосом">
-            <img src="../assets/mic.png" alt="" />
+            <img src="../assets/mic.svg" alt="" />
           </button>
           <a class="admin-link" href="../screen-9/index.html">админ</a>
           <a class="nav-button qr" href="../screen-10/index.html" aria-label="Открыть QR сканер">
@@ -693,8 +717,7 @@
 
     <script>
       function setAppScale() {
-        const viewport = window.visualViewport || window;
-        const scale = Math.min(1, viewport.width / 430, viewport.height / 932);
+        const scale = Math.min(1, window.innerWidth / 430, window.innerHeight / 932);
         document.documentElement.style.setProperty("--app-scale", scale.toString());
       }
 
@@ -911,7 +934,7 @@
             <div class="opinion-row">
               <textarea class="opinion-input" rows="3" placeholder="введите мнение">${escapeHtml(composerDrafts[draftKey(id)] || "")}</textarea>
               <button class="opinion-send${sentComposerIds.has(draftKey(id)) ? " is-sent" : ""}" type="button" aria-label="Отправить мнение"></button>
-              <button class="opinion-mic" type="button" aria-label="Записать голосом"><img src="../assets/mic.png" alt="" /></button>
+              <button class="opinion-mic" type="button" aria-label="Записать голосом"><img src="../assets/mic.svg" alt="" /></button>
             </div>
           </div>
         `;
@@ -1097,8 +1120,10 @@
       renderEvents(currentSection);
       updateMapLine();
       document.querySelector(".map-scroll")?.addEventListener("scroll", updateMapLine, { passive: true });
-      window.addEventListener("resize", setAppScale);
-      window.visualViewport?.addEventListener("resize", setAppScale);
+      window.addEventListener("resize", () => {
+        if (document.activeElement?.matches?.("input, textarea, select")) return;
+        setAppScale();
+      });
     </script>
   </body>
 </html>

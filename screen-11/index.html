@@ -413,6 +413,28 @@
         font-weight: 300;
         line-height: 1.12;
       }
+
+      img,
+      button,
+      a {
+        -webkit-tap-highlight-color: transparent;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        user-select: none;
+      }
+
+      img {
+        -webkit-user-drag: none;
+        user-drag: none;
+        pointer-events: none;
+      }
+
+      input,
+      textarea,
+      select {
+        -webkit-user-select: text;
+        user-select: text;
+      }
     </style>
   </head>
   <body>
@@ -477,14 +499,15 @@
 
     <script>
       function setAppScale() {
-        const viewport = window.visualViewport || window;
-        const scale = Math.min(1, viewport.width / 430, viewport.height / 932);
+        const scale = Math.min(1, window.innerWidth / 430, window.innerHeight / 932);
         document.documentElement.style.setProperty("--app-scale", scale.toString());
       }
 
       setAppScale();
-      window.addEventListener("resize", setAppScale);
-      window.visualViewport?.addEventListener("resize", setAppScale);
+      window.addEventListener("resize", () => {
+        if (document.activeElement?.matches?.("input, textarea, select")) return;
+        setAppScale();
+      });
     </script>
   </body>
 </html>

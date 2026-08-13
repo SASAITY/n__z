@@ -1091,6 +1091,28 @@
           border-radius: 42px;
         }
       }
+
+      img,
+      button,
+      a {
+        -webkit-tap-highlight-color: transparent;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        user-select: none;
+      }
+
+      img {
+        -webkit-user-drag: none;
+        user-drag: none;
+        pointer-events: none;
+      }
+
+      input,
+      textarea,
+      select {
+        -webkit-user-select: text;
+        user-select: text;
+      }
     </style>
   </head>
   <body>
@@ -1099,7 +1121,7 @@
         <div class="recording-field" aria-hidden="true"></div>
         <img class="menu-shade" src="../assets/menu-rectangle-screen-7.svg" alt="" aria-hidden="true" />
 
-        <a class="island-title" href="../screen-6/index.html" aria-label="Открыть главный экран">G8 ОБЪЕКТ</a>
+        <a class="island-title" href="./index.html" aria-label="Открыть главный экран">G8 ОБЪЕКТ</a>
 
         <section class="object-stage" aria-label="Интерактивный G8 объект">
           <div class="pulse" aria-hidden="true"></div>
@@ -1230,7 +1252,7 @@
           </a>
           <a class="help-link" href="../screen-11/index.html" aria-label="Открыть справку">?</a>
           <button class="nav-button mic" type="button" aria-label="Создать запись голосом">
-            <img src="../assets/mic.png" alt="" />
+            <img src="../assets/mic.svg" alt="" />
           </button>
           <a class="admin-link" href="../screen-9/index.html">админ</a>
           <a class="nav-button qr" href="../screen-10/index.html" aria-label="Открыть QR сканер">
@@ -1254,8 +1276,7 @@
       };
 
       function setAppScale() {
-        const viewport = window.visualViewport || window;
-        const scale = Math.min(1, viewport.width / 430, viewport.height / 932);
+        const scale = Math.min(1, window.innerWidth / 430, window.innerHeight / 932);
         document.documentElement.style.setProperty("--app-scale", scale.toString());
       }
 
@@ -2139,8 +2160,10 @@
       startNanoBubbleMotion();
       startCanvasZoom();
       startMicHoldFeedback();
-      window.addEventListener("resize", setAppScale);
-      window.visualViewport?.addEventListener("resize", setAppScale);
+      window.addEventListener("resize", () => {
+        if (document.activeElement?.matches?.("input, textarea, select")) return;
+        setAppScale();
+      });
       document.querySelector(".b-music")?.addEventListener("click", (event) => handleSectionClick(event, "music"));
       document.querySelector(".b-digital")?.addEventListener("click", (event) => handleSectionClick(event, "digital"));
       document.querySelector(".b-ads")?.addEventListener("click", (event) => handleSectionClick(event, "ads"));
